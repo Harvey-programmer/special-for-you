@@ -732,7 +732,7 @@
                     <h3 class="card-title">愿望清单</h3>
                 </div>
                 <div class="card-content">
-                    <p>写下你的愿望，发送给我，会有小超人帮你实现哦。</p>
+                    <p>写下你的愿望，只有通过验证的人才能将愿望发送给我。</p>
                     
                     <!-- 验证码区域 -->
                     <div class="verification-area">
@@ -770,7 +770,7 @@
                         
                         <!-- 数据管理 -->
                         <div class="data-management">
-                            <p class="data-info">💡 原来有这么多愿望呀，更换浏览器或者设备，愿望数据会消失哦~</p>
+                            <p class="data-info">💡 愿望数据保存在您的手机浏览器本地存储中。如果您更换设备或清除浏览器数据，愿望将会丢失。建议定期备份。</p>
                             <div class="data-actions">
                                 <button class="data-btn" id="exportWishesBtn">导出愿望</button>
                                 <button class="data-btn" id="importWishesBtn">导入愿望</button>
@@ -790,7 +790,7 @@
                     <h3 class="card-title">星空日记本</h3>
                 </div>
                 <div class="card-content">
-                    <p>记录每天的心情和想法，星空会将你的烦恼带走，把快乐留下哦~</p>
+                    <p>记录每天的心情和想法，保存到这片星空中。日记只保存在您的手机本地。</p>
                     <div class="diary-container">
                         <textarea class="diary-input" id="diaryInput" placeholder="今天发生了什么？写下你的心情..." maxlength="1000"></textarea>
                         <div class="btn-group">
@@ -801,7 +801,7 @@
                         
                         <!-- 日记本数据管理 -->
                         <div class="data-management">
-                            <p class="data-info">💡 原来你记下了这么多的日记呀，更换浏览器或者设备，日记数据会消失哦~</p>
+                            <p class="data-info">💡 日记数据同样保存在您的手机浏览器本地存储中。以下是对日记的管理功能：</p>
                             <div class="data-actions">
                                 <button class="data-btn" id="exportDiaryBtn">导出日记</button>
                                 <button class="data-btn" id="importDiaryBtn">导入日记</button>
@@ -829,8 +829,8 @@
                     </p>
                     <div style="padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 15px; border-left: 4px solid #ffd93d;">
                         <p style="color: #ffd93d; font-style: italic; text-align: center; font-size: 1.3rem;">
-                            有些话不必说出口，因为眼神已经传达了一切。<br>
-                            愿这一刻的宁静，成为我们之间最美的语言。
+                            "有些话不必说出口，因为眼神已经传达了一切。<br>
+                            愿这一刻的宁静，成为我们之间最美的语言。"
                         </p>
                     </div>
                 </div>
@@ -840,8 +840,7 @@
         <footer>
             <p>这片星空永远为你保留 ✨</p>
             <p style="margin-top: 10px; font-size: 0.8rem; color: #a8d8ea;">
-                数据说明：愿望和日记保存在浏览器，不会上传到服务器</p>
-                作者：何！海！嘉！
+                数据保存说明：愿望和日记保存在您的手机浏览器本地，不会上传到服务器
             </p>
         </footer>
     </div>
@@ -997,12 +996,23 @@
                 {
                     url: "https://music.163.com/song/media/outer/url?id=1330348068.mp3", // 网易云音乐 - 钢琴曲
                     name: "星空钢琴曲"
-                }
+                },
+                {
+                    url: "https://music.163.com/song/media/outer/url?id=29723014.mp3", // 网易云音乐 - 轻音乐
+                    name: "轻音乐"
+                },
                 {
                     url: "https://music.163.com/song/media/outer/url?id=1330348068.mp3?from=singlemessage", // 网易云音乐备用链接
                     name: "星空背景音乐"
+                },
+                {
+                    url: "https://music.163.com/song/media/outer/url?id=29723014.mp3?from=singlemessage", // 网易云音乐备用链接
+                    name: "宁静夜晚"
+                },
+                {
+                    url: "https://freepd.com/music/Prelude%20No.%2017.mp3", // 免费公共音乐
+                    name: "前奏曲"
                 }
-               
             ];
             
             // 创建音频元素
@@ -1237,7 +1247,7 @@
             
             // 提示按钮点击事件
             hintBtn.addEventListener('click', function() {
-                showMessage("提示：想想对我们来说有特殊意义的日期");
+                showMessage("提示：想想对你来说有特殊意义的日期");
             });
             
             // 回车键验证
