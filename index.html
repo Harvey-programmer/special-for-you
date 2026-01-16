@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>特别的遇见</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 重置默认样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* 移除iOS点击高亮 */
+            font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        /* 防止用户缩放页面 */
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%; /* 防止字体自动调整 */
+            -webkit-overflow-scrolling: touch; /* 平滑滚动 */
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c2461 0%, #1e3799 30%, #4a69bd 100%);
+            color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px 15px;
+            position: relative;
+        }
+        
+        /* 安全区域适配 */
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+        
+        .safe-area-top {
+            padding-top: env(safe-area-inset-top, 20px);
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 5px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 10px 15px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: #e6e6fa;
+            font-weight: 300;
+            letter-spacing: 1px;
+            line-height: 1.3;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #a8d8ea;
+            max-width: 100%;
+            margin: 0 auto 15px;
+            line-height: 1.6;
+            font-style: italic;
+            padding: 0 10px;
+        }
+        
+        .star-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .star {
+            width: 70px;
+            height: 70px;
+            background: #f7f7f7;
+            position: relative;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: twinkle 3s infinite alternate;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+        
+        .star:hover, .star:active {
+            transform: scale(1.2) rotate(15deg);
+            background: #fffacd;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        
+        .poem-box {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px 15px;
+            margin: 20px auto;
+            max-width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .poem-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #a8d8ea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .poem-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #f0f8ff;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        .poem-line {
+            margin: 12px 0;
+            opacity: 0.9;
+        }
+        
+        .interaction-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 25px 0;
+            padding: 20px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+        
+        .question {
+            font-size: 1.2rem;
+            color: #a8d8ea;
+            margin-bottom: 15px;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 15px;
+        }
+        
+        .option-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(168, 216, 234, 0.3);
+            color: #f0f8ff;
+            padding: 16px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            width: 100%;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .option-btn:active {
+            background: rgba(168, 216, 234, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .hidden-message {
+            margin-top: 20px;
+            min-height: 60px;
+            text-align: center;
+            padding: 15px;
+            font-size: 1.1rem;
+            color: #fffacd;
+            font-weight: 500;
+        }
+        
+        .moon-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .moon-label {
+            color: #a8d8ea;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .moon-phase {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #f5f5dc;
+            position: relative;
+            margin: 10px auto;
+            box-shadow: 0 0 20px rgba(245, 245, 220, 0.5);
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .moon-shadow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #0c2461;
+            border-radius: 50%;
+            transform: translateX(0%);
+            transition: all 1.5s ease;
+        }
+        
+        .moon-message {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            color: #f0f8ff;
+            min-height: 60px;
+            line-height: 1.6;
+            padding: 0 15px;
+        }
+        
+        .quote-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .quote-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 3px solid #a8d8ea;
+        }
+        
+        .quote-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            font-style: italic;
+            margin-bottom: 10px;
+            color: #e6e6fa;
+        }
+        
+        .quote-source {
+            text-align: right;
+            color: #a8d8ea;
+            font-size: 0.9rem;
+        }
+        
+        .subtle-hint {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px 15px;
+            background: rgba(168, 216, 234, 0.1);
+            border-radius: 12px;
+            border-left: 3px solid #a8d8ea;
+        }
+        
+        .hint-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #f0f8ff;
+        }
+        
+        .secret-box-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .secret-box-label {
+            color: #a8d8ea;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .secret-box {
+            width: 120px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(168, 216, 234, 0.3);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .secret-box:active {
+            transform: translateY(-5px);
+            border-color: rgba(168, 216, 234, 0.6);
+        }
+        
+        .secret-box.open {
+            height: auto;
+            min-height: 180px;
+            width: 100%;
+            max-width: 320px;
+            border-radius: 15px;
+            padding: 20px 15px;
+        }
+        
+        .secret-box-icon {
+            font-size: 2rem;
+            color: #a8d8ea;
+            transition: all 0.5s ease;
+        }
+        
+        .secret-box.open .secret-box-icon {
+            transform: translateY(-10px);
+            opacity: 0.5;
+        }
+        
+        .secret-box-text {
+            font-size: 0.9rem;
+            color: #a8d8ea;
+            margin-top: 8px;
+            opacity: 0.8;
+        }
+        
+        .secret-message {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            text-align: center;
+            padding: 0 10px;
+            transition: all 0.8s ease;
+            line-height: 1.6;
+        }
+        
+        .secret-box.open .secret-message {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 15px;
+        }
+        
+        .secret-messages-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .secret-message-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 3px solid #a8d8ea;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+        }
+        
+        .secret-box.open .secret-message-item {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .secret-box.open .secret-message-item:nth-child(1) {
+            transition-delay: 0.2s;
+        }
+        
+        .secret-box.open .secret-message-item:nth-child(2) {
+            transition-delay: 0.4s;
+        }
+        
+        .secret-box.open .secret-message-item:nth-child(3) {
+            transition-delay: 0.6s;
+        }
+        
+        .secret-box.open .secret-message-item:nth-child(4) {
+            transition-delay: 0.8s;
+        }
+        
+        /* 音乐播放器样式 */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .music-btn {
+            background: transparent;
+            border: none;
+            color: #a8d8ea;
+            font-size: 1.4rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .music-btn:active {
+            background: rgba(168, 216, 234, 0.2);
+            transform: scale(0.95);
+        }
+        
+        .music-info {
+            font-size: 0.85rem;
+            color: #a8d8ea;
+            white-space: nowrap;
+        }
+        
+        .mobile-instruction {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 12px 15px;
+            z-index: 1000;
+            font-size: 0.8rem;
+            color: #a8d8ea;
+            max-width: 150px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            opacity: 0.9;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px 15px;
+            color: #a8d8ea;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 防止iOS Safari 100vh问题 */
+        .full-height {
+            min-height: -webkit-fill-available;
+        }
+        
+        /* 移除滚动条 */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* 防止长按弹出菜单 */
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        /* 但允许文本选择 */
+        .selectable {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 320px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .poem-content {
+                font-size: 1rem;
+            }
+            
+            .secret-box.open {
+                min-height: 200px;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                max-width: 700px;
+            }
+            
+            .options {
+                flex-direction: row;
+                max-width: 100%;
+            }
+            
+            .option-btn {
+                width: auto;
+                min-width: 180px;
+            }
+            
+            .quote-section {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .quote-card {
+                flex: 1;
+                min-width: 280px;
+            }
+        }
+    </style>
+</head>
+<body class="full-height safe-area-bottom safe-area-top">
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-star"></i> 偶然的星光 <i class="fas fa-star"></i></h1>
+            <p class="subtitle">有些相遇就像夜空中偶然交汇的星光，短暂却明亮，让人忍不住想要多看几眼</p>
+            
+            <div class="star-container">
+                <div class="star" id="main-star"></div>
+            </div>
+        </header>
+        
+        <div class="poem-box">
+            <h2 class="poem-title"><i class="fas fa-feather-alt"></i> 无题偶感</h2>
+            <div class="poem-content">
+                <div class="poem-line">风起时，想起某个午后的对话</div>
+                <div class="poem-line">云飘过，带走一丝莫名的期待</div>
+                <div class="poem-line">雨落时，听见心跳与雨滴的合奏</div>
+                <div class="poem-line">夜深了，月光悄悄写下未完的诗行</div>
+                <div class="poem-line">而星光，静静守着这个秘密</div>
+            </div>
+        </div>
+        
+        <div class="interaction-area">
+            <p class="question">如果有一片星海，你最想探索哪一颗星？</p>
+            <div class="options">
+                <button class="option-btn" data-message="你像那颗最亮的星，在夜空中独自美丽，却不知有多少目光为你停留">最亮的那颗</button>
+                <button class="option-btn" data-message="有些星虽然不起眼，但它的光芒经过漫长旅程才抵达我们眼中，像某些珍贵的相遇">最远的那颗</button>
+                <button class="option-btn" data-message="星座之间的故事总是迷人，就像人与人之间微妙而美丽的联系">组成星座的那些</button>
+            </div>
+            <div class="hidden-message" id="star-message"></div>
+        </div>
+        
+        <div class="quote-section">
+            <div class="quote-card">
+                <p class="quote-text">"世间所有的相遇，都是久别重逢。"</p>
+                <p class="quote-source">——《一代宗师》</p>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">"你站在桥上看风景，看风景的人在楼上看你。"</p>
+                <p class="quote-source">——卞之琳《断章》</p>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">"今晚月色真美。"</p>
+                <p class="quote-source">——夏目漱石</p>
+            </div>
+        </div>
+        
+        <div class="moon-section">
+            <div class="moon-label">月有阴晴圆缺，点击探索月相变化</div>
+            <div class="moon-phase" id="moon">
+                <div class="moon-shadow"></div>
+            </div>
+            <div class="moon-message" id="moon-message">满月当空，美好总是短暂而珍贵</div>
+        </div>
+        
+        <div class="subtle-hint">
+            <p class="hint-text">有时候，最美好的事物是那些尚未言说的、朦胧的、留有想象空间的。</p>
+            <p class="hint-text">就像夜空中的星光，虽然遥远，却照亮了前行的路。</p>
+        </div>
+        
+        <div class="secret-box-section">
+            <div class="secret-box-label">开启秘密盒子，发现隐藏的话语</div>
+            <div class="secret-box" id="secret-box">
+                <div class="secret-box-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="secret-box-text">点击开启</div>
+                
+                <div class="secret-message" id="secret-message">
+                    <div class="secret-messages-container">
+                        <div class="secret-message-item">有些话不必说出口，因为眼神已经传达了一切。</div>
+                        <div class="secret-message-item">在无数平行宇宙中，我很庆幸在这个宇宙遇见了你。</div>
+                        <div class="secret-message-item">就像星星不会说话，但夜空知道它的存在。</div>
+                        <div class="secret-message-item">愿这一刻的宁静，成为我们之间最美的语言。</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>愿每一个美好瞬间都被温柔以待</p>
+    </footer>
+
+    <!-- 音乐播放器 -->
+    <div class="music-player" id="music-player">
+        <div class="music-controls">
+            <button class="music-btn" id="play-btn">
+                <i class="fas fa-play"></i>
+            </button>
+        </div>
+        <div class="music-info" id="music-info">点击播放音乐</div>
+    </div>
+    
+    <!-- 手机操作提示 -->
+    <div class="mobile-instruction" id="mobile-instruction">
+        点击页面中的元素进行交互
+    </div>
+
+    <!-- 音频元素 -->
+    <audio id="background-music" loop preload="auto">
+        <!-- 使用一个稳定可靠的免费轻音乐链接 -->
+        <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-sunset-687.mp3" type="audio/mpeg">
+        您的浏览器不支持音频元素。
+    </audio>
+
+    <script>
+        // 页面初始化
+        function initializePage() {
+            console.log("页面初始化开始");
+            
+            // 设置所有交互功能
+            setupStarInteraction();
+            setupMoonInteraction();
+            setupSecretBox();
+            setupMainStarClick();
+            setupMusicPlayer();
+            
+            // 移除手机提示
+            setTimeout(() => {
+                const instruction = document.getElementById('mobile-instruction');
+                if (instruction) {
+                    instruction.style.opacity = '0';
+                    instruction.style.transition = 'opacity 1s ease';
+                    setTimeout(() => {
+                        if (instruction.parentNode) {
+                            instruction.parentNode.removeChild(instruction);
+                        }
+                    }, 1000);
+                }
+            }, 5000);
+            
+            console.log("页面初始化完成");
+        }
+        
+        // 星星选择交互
+        function setupStarInteraction() {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            const starMessage = document.getElementById('star-message');
+            
+            if (optionButtons.length === 0) {
+                console.error("找不到星星选择按钮");
+                return;
+            }
+            
+            optionButtons.forEach((button, index) => {
+                // 为移动设备添加触摸事件
+                button.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.background = 'rgba(168, 216, 234, 0.2)';
+                }, { passive: false });
+                
+                button.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.style.transform = 'translateY(0)';
+                    this.style.background = 'rgba(255, 255, 255, 0.1)';
+                    
+                    const message = this.getAttribute('data-message');
+                    if (starMessage) {
+                        starMessage.textContent = message;
+                    }
+                    
+                    // 添加星星动画
+                    const mainStar = document.getElementById('main-star');
+                    if (mainStar) {
+                        mainStar.style.animation = 'none';
+                        setTimeout(() => {
+                            mainStar.style.animation = 'twinkle 3s infinite alternate';
+                        }, 10);
+                    }
+                }, { passive: false });
+                
+                // 保留点击事件（用于桌面设备）
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const message = this.getAttribute('data-message');
+                    if (starMessage) {
+                        starMessage.textContent = message;
+                    }
+                    
+                    // 添加星星动画
+                    const mainStar = document.getElementById('main-star');
+                    if (mainStar) {
+                        mainStar.style.animation = 'none';
+                        setTimeout(() => {
+                            mainStar.style.animation = 'twinkle 3s infinite alternate';
+                        }, 10);
+                    }
+                });
+            });
+        }
+        
+        // 月亮交互
+        function setupMoonInteraction() {
+            const moon = document.getElementById('moon');
+            if (!moon) {
+                console.error("找不到月亮元素");
+                return;
+            }
+            
+            const moonShadow = moon.querySelector('.moon-shadow');
+            const moonMessage = document.getElementById('moon-message');
+            
+            // 月相阶段
+            const moonPhases = [
+                { shadow: 100, message: "新月如钩，等待满月的过程最是迷人" },
+                { shadow: 75, message: "蛾眉月，像那些欲言又止的话语" },
+                { shadow: 50, message: "上弦月，故事刚刚展开一半" },
+                { shadow: 25, message: "盈凸月，美好的事物即将圆满" },
+                { shadow: 0, message: "满月当空，美好总是短暂而珍贵" },
+                { shadow: 25, message: "亏凸月，有些美好值得慢慢回味" },
+                { shadow: 50, message: "下弦月，每一段旅程都有终点" },
+                { shadow: 75, message: "残月如舟，载着未完的故事继续前行" }
+            ];
+            
+            let phaseIndex = 4; // 从满月开始
+            
+            // 初始化月相
+            if (moonShadow) {
+                moonShadow.style.transform = `translateX(${moonPhases[phaseIndex].shadow}%)`;
+            }
+            if (moonMessage) {
+                moonMessage.textContent = moonPhases[phaseIndex].message;
+            }
+            
+            // 触摸事件
+            moon.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.style.transform = 'scale(0.95)';
+            }, { passive: false });
+            
+            moon.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.style.transform = 'scale(1)';
+                
+                // 切换到下一个月相
+                phaseIndex = (phaseIndex + 1) % moonPhases.length;
+                
+                // 更新月相
+                if (moonShadow) {
+                    moonShadow.style.transform = `translateX(${moonPhases[phaseIndex].shadow}%)`;
+                }
+                if (moonMessage) {
+                    moonMessage.textContent = moonPhases[phaseIndex].message;
+                }
+            }, { passive: false });
+            
+            // 点击事件
+            moon.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // 切换到下一个月相
+                phaseIndex = (phaseIndex + 1) % moonPhases.length;
+                
+                // 更新月相
+                if (moonShadow) {
+                    moonShadow.style.transform = `translateX(${moonPhases[phaseIndex].shadow}%)`;
+                }
+                if (moonMessage) {
+                    moonMessage.textContent = moonPhases[phaseIndex].message;
+                }
+            });
+        }
+        
+        // 秘密盒子交互
+        function setupSecretBox() {
+            const secretBox = document.getElementById('secret-box');
+            if (!secretBox) {
+                console.error("找不到秘密盒子元素");
+                return;
+            }
+            
+            const secretBoxIcon = secretBox.querySelector('.secret-box-icon i');
+            const secretBoxText = secretBox.querySelector('.secret-box-text');
+            let isOpen = false;
+            
+            // 触摸事件
+            secretBox.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.style.transform = 'translateY(-5px)';
+            }, { passive: false });
+            
+            secretBox.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.style.transform = 'translateY(0)';
+                
+                isOpen = !isOpen;
+                
+                if (isOpen) {
+                    // 打开盒子
+                    secretBox.classList.add('open');
+                    if (secretBoxIcon) {
+                        secretBoxIcon.className = 'fas fa-envelope-open';
+                    }
+                    if (secretBoxText) {
+                        secretBoxText.textContent = '点击关闭';
+                    }
+                } else {
+                    // 关闭盒子
+                    secretBox.classList.remove('open');
+                    if (secretBoxIcon) {
+                        secretBoxIcon.className = 'fas fa-box';
+                    }
+                    if (secretBoxText) {
+                        secretBoxText.textContent = '点击开启';
+                    }
+                }
+            }, { passive: false });
+            
+            // 点击事件
+            secretBox.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                isOpen = !isOpen;
+                
+                if (isOpen) {
+                    // 打开盒子
+                    secretBox.classList.add('open');
+                    if (secretBoxIcon) {
+                        secretBoxIcon.className = 'fas fa-envelope-open';
+                    }
+                    if (secretBoxText) {
+                        secretBoxText.textContent = '点击关闭';
+                    }
+                } else {
+                    // 关闭盒子
+                    secretBox.classList.remove('open');
+                    if (secretBoxIcon) {
+                        secretBoxIcon.className = 'fas fa-box';
+                    }
+                    if (secretBoxText) {
+                        secretBoxText.textContent = '点击开启';
+                    }
+                }
+            });
+        }
+        
+        // 主星星点击事件
+        function setupMainStarClick() {
+            const mainStar = document.getElementById('main-star');
+            if (!mainStar) {
+                console.error("找不到主星星元素");
+                return;
+            }
+            
+            // 触摸事件
+            mainStar.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.style.transform = 'scale(1.2) rotate(15deg)';
+            }, { passive: false });
+            
+            mainStar.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.style.transform = 'scale(1) rotate(0deg)';
+                
+                // 心跳加速效果
+                this.style.animationDuration = '0.6s';
+                setTimeout(() => {
+                    this.style.animationDuration = '1.2s';
+                }, 1000);
+            }, { passive: false });
+            
+            // 点击事件
+            mainStar.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // 心跳加速效果
+                this.style.animationDuration = '0.6s';
+                setTimeout(() => {
+                    this.style.animationDuration = '1.2s';
+                }, 1000);
+            });
+        }
+        
+        // 音乐播放器功能
+        function setupMusicPlayer() {
+            const audio = document.getElementById('background-music');
+            const playBtn = document.getElementById('play-btn');
+            const musicInfo = document.getElementById('music-info');
+            
+            if (!audio || !playBtn) {
+                console.error("找不到音乐播放器元素");
+                return;
+            }
+            
+            // 设置初始音量
+            audio.volume = 0.3;
+            
+            // iOS音频播放处理
+            let isPlaying = false;
+            
+            // 触摸事件
+            playBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.style.transform = 'scale(0.95)';
+            }, { passive: false });
+            
+            playBtn.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.style.transform = 'scale(1)';
+                
+                if (!isPlaying) {
+                    // iOS需要用户交互才能播放音频
+                    audio.play().then(() => {
+                        isPlaying = true;
+                        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                        musicInfo.textContent = "正在播放";
+                    }).catch(err => {
+                        console.error("播放失败:", err);
+                        musicInfo.textContent = "点击播放音乐";
+                    });
+                } else {
+                    audio.pause();
+                    isPlaying = false;
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    musicInfo.textContent = "点击播放音乐";
+                }
+            }, { passive: false });
+            
+            // 点击事件
+            playBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (!isPlaying) {
+                    audio.play().then(() => {
+                        isPlaying = true;
+                        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                        musicInfo.textContent = "正在播放";
+                    }).catch(err => {
+                        console.error("播放失败:", err);
+                        musicInfo.textContent = "点击播放音乐";
+                    });
+                } else {
+                    audio.pause();
+                    isPlaying = false;
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    musicInfo.textContent = "点击播放音乐";
+                }
+            });
+            
+            // 音频加载失败处理
+            audio.addEventListener('error', function() {
+                console.error("音频加载失败");
+                musicInfo.textContent = "音乐加载失败";
+                playBtn.style.display = 'none';
+            });
+            
+            // 页面隐藏时暂停音乐
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden && isPlaying) {
+                    audio.pause();
+                    isPlaying = false;
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    musicInfo.textContent = "点击播放音乐";
+                }
+            });
+        }
+        
+        // 防止iOS橡皮筋效果
+        document.addEventListener('touchmove', function(e) {
+            if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A' && e.target.id !== 'moon') {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // 页面加载完成后初始化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            initializePage();
+        }
+        
+        // 处理iOS键盘弹出
+        window.addEventListener('resize', function() {
+            if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+                document.activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    </script>
+</body>
+</html>
