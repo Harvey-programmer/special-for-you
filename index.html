@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>给朝清的星空</title>
+    <title>给朝清的星空诗</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         /* 基础重置 */
         * {
@@ -12,7 +13,6 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
         }
         
         html, body {
@@ -21,262 +21,368 @@
             overflow-x: hidden;
             -webkit-text-size-adjust: 100%;
             -webkit-overflow-scrolling: touch;
-            touch-action: manipulation;
         }
         
         body {
-            background: linear-gradient(135deg, #0c0032 0%, #190061 30%, #240090 70%, #3500d3 100%);
+            font-family: 'Noto Serif SC', serif;
+            background: #0a0a2a;
             color: #f5f5f5;
             min-height: 100vh;
             position: relative;
-            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
         
-        /* 修复iOS 100vh问题 */
-        .container {
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            width: 100%;
-            padding: 20px 15px;
-            position: relative;
-            z-index: 2;
-        }
-        
-        /* 星空背景 */
-        .stars-container {
+        /* 动态星空背景 */
+        .dynamic-stars {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: 0;
             pointer-events: none;
-            z-index: 1;
         }
         
-        .star {
+        .twinkling-star {
             position: absolute;
-            background-color: #ffffff;
+            background-color: white;
             border-radius: 50%;
-            pointer-events: none;
+            animation: twinkle 3s infinite;
         }
         
-        /* 欢迎界面 */
-        .welcome-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(12, 0, 50, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            padding: 20px;
-        }
-        
-        .welcome-content {
-            text-align: center;
-            max-width: 600px;
-        }
-        
-        .welcome-title {
-            font-size: 2.2rem;
-            margin-bottom: 20px;
-            color: #ffd700;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
-        }
-        
-        .welcome-text {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: #a8d8ea;
-            margin-bottom: 30px;
-        }
-        
-        .start-btn {
-            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
-            color: #0c0032;
-            border: none;
-            padding: 16px 40px;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
-            -webkit-appearance: none;
-            touch-action: manipulation;
-        }
-        
-        .start-btn:active {
-            transform: scale(0.95);
-        }
-        
-        /* 主内容 */
-        .main-content {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 1s ease, transform 1s ease;
-        }
-        
-        .main-content.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        header {
-            text-align: center;
-            padding: 20px 0 30px;
-        }
-        
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            color: #e6e6fa;
-            font-weight: 300;
-        }
-        
-        .subtitle {
-            font-size: 1.1rem;
-            color: #a8d8ea;
-            line-height: 1.6;
-            font-style: italic;
-            margin-bottom: 20px;
-        }
-        
-        /* 主星星 */
-        .main-star-container {
-            display: flex;
-            justify-content: center;
-            margin: 30px 0;
-        }
-        
-        .main-star {
-            width: 80px;
-            height: 80px;
-            background: #fffacd;
-            position: relative;
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            animation: twinkle 2s infinite alternate;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
+        .moving-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: moveStar linear infinite;
         }
         
         @keyframes twinkle {
-            0%, 100% { 
-                transform: scale(1);
-                opacity: 0.8;
-            }
-            50% { 
-                transform: scale(1.1);
-                opacity: 1;
-            }
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
         
-        /* 互动卡片 */
-        .cards-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin: 30px 0;
+        @keyframes moveStar {
+            0% { transform: translateY(0) translateX(0); }
+            100% { transform: translateY(100vh) translateX(100vw); }
         }
         
-        .card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* 容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 安全区域适配 */
+        .safe-area-top {
+            padding-top: env(safe-area-inset-top, 20px);
+        }
+        
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+        
+        /* 精美标题 */
+        .main-header {
+            text-align: center;
+            padding: 40px 20px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .title-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .main-title {
+            font-family: 'ZCOOL QingKe HuangYou', cursive;
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #1dd1a1, #54a0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+            position: relative;
+            z-index: 2;
+            animation: titleGlow 4s ease-in-out infinite;
+        }
+        
+        .title-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #1dd1a1, #54a0ff);
+            filter: blur(20px);
+            opacity: 0.5;
+            z-index: 1;
+            animation: glowPulse 6s ease-in-out infinite;
+        }
+        
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 0 30px rgba(255, 107, 107, 0.3); }
+            50% { text-shadow: 0 0 50px rgba(255, 107, 107, 0.6), 0 0 80px rgba(255, 107, 107, 0.3); }
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.05); }
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #a8d8ea;
+            font-style: italic;
+            margin-top: 20px;
+            line-height: 1.6;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .subtitle::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ffd93d, transparent);
+        }
+        
+        /* 主星星 */
+        .center-star {
+            width: 100px;
+            height: 100px;
+            margin: 30px auto;
+            position: relative;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
         }
         
-        .card:active {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.12);
+        .star-shape {
+            width: 100%;
+            height: 100%;
+            background: #ffd93d;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            position: relative;
+            animation: starFloat 6s ease-in-out infinite;
+            box-shadow: 0 0 40px #ffd93d;
+        }
+        
+        .star-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle, rgba(255, 217, 61, 0.3) 0%, rgba(255, 217, 61, 0) 70%);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes starFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        /* 卡片容器 */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        /* 卡片样式 */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+        
+        .card:hover::before {
+            transform: translateX(100%);
         }
         
         .card-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
+            gap: 15px;
+            margin-bottom: 20px;
         }
         
         .card-icon {
-            font-size: 1.8rem;
-            color: #ffd700;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #ffd93d;
         }
         
         .card-title {
-            font-size: 1.3rem;
-            color: #a8d8ea;
+            font-size: 1.4rem;
+            color: #ffffff;
+            font-weight: 600;
         }
         
         .card-content {
-            font-size: 1.1rem;
+            color: #e6e6fa;
             line-height: 1.6;
-            color: #f0f8ff;
+            font-size: 1.1rem;
+        }
+        
+        /* 愿望清单卡片 */
+        .wish-form {
+            margin-top: 20px;
+        }
+        
+        .wish-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .wish-input:focus {
+            outline: none;
+            border-color: #ffd93d;
+        }
+        
+        .email-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+        
+        .email-input:focus {
+            outline: none;
+            border-color: #ffd93d;
         }
         
         /* 按钮样式 */
         .btn {
-            padding: 12px 25px;
+            padding: 12px 30px;
             border-radius: 25px;
             font-size: 1.1rem;
+            font-weight: 600;
             cursor: pointer;
             border: none;
-            -webkit-appearance: none;
-            touch-action: manipulation;
-        }
-        
-        .btn:active {
-            transform: scale(0.95);
-        }
-        
-        .primary-btn {
-            background: rgba(255, 107, 107, 0.2);
-            color: #ff6b6b;
-            border: 1px solid rgba(255, 107, 107, 0.4);
-        }
-        
-        .secondary-btn {
-            background: rgba(168, 216, 234, 0.2);
-            color: #a8d8ea;
-            border: 1px solid rgba(168, 216, 234, 0.4);
-        }
-        
-        /* 月亮区域 */
-        .moon-container {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #f5f5dc;
-            margin: 0 auto 20px;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
         }
         
-        .moon-shadow {
+        .btn::after {
+            content: '';
             position: absolute;
-            width: 100%;
-            height: 100%;
-            background: #0c0032;
-            border-radius: 50%;
-            transform: translateX(0%);
-            transition: transform 1s ease;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
         }
         
-        .moon-message {
+        .btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% { transform: scale(0, 0); opacity: 0.5; }
+            100% { transform: scale(20, 20); opacity: 0; }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            color: #0a0a2a;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        /* 消息提示 */
+        .message-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            z-index: 1000;
+            font-size: 0.9rem;
             text-align: center;
-            font-style: italic;
-            color: #fffacd;
-            min-height: 40px;
-            margin-top: 10px;
+            transition: transform 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .message-toast.show {
+            transform: translateX(-50%) translateY(0);
         }
         
         /* 音乐播放器 */
@@ -286,7 +392,6 @@
             right: 20px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border-radius: 30px;
             padding: 12px 20px;
             display: flex;
@@ -309,12 +414,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            -webkit-appearance: none;
-            touch-action: manipulation;
-        }
-        
-        .music-btn:active {
-            background: rgba(168, 216, 234, 0.2);
         }
         
         .music-info {
@@ -323,129 +422,66 @@
             white-space: nowrap;
         }
         
-        /* 消息提示 */
-        .message-toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 12px 20px;
+        /* 愿望清单容器 */
+        .wish-list {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .wish-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 15px;
             border-radius: 10px;
-            z-index: 1000;
-            font-size: 0.9rem;
-            max-width: 80%;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
+            margin-bottom: 10px;
+            border-left: 3px solid #ffd93d;
         }
         
-        .message-toast.show {
-            opacity: 1;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 30px 15px;
-            color: #a8d8ea;
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 30px;
-        }
-        
-        /* 响应式调整 */
-        @media (max-width: 320px) {
-            h1 {
-                font-size: 1.8rem;
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
             }
             
-            .welcome-title {
-                font-size: 1.8rem;
+            .cards-grid {
+                grid-template-columns: 1fr;
             }
             
-            .card {
-                padding: 20px 15px;
+            .music-player {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                justify-content: center;
             }
-        }
-        
-        @media (min-width: 768px) {
+            
             .container {
-                max-width: 700px;
-                margin: 0 auto;
-            }
-            
-            .cards-container {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-            
-            .card {
-                flex: 1;
-                min-width: 280px;
+                padding: 10px;
             }
         }
         
-        /* 安全区域适配 */
-        .safe-area-top {
-            padding-top: constant(safe-area-inset-top);
-            padding-top: env(safe-area-inset-top);
+        /* 防止iOS橡皮筋效果 */
+        .no-scroll {
+            overflow: hidden;
         }
         
-        .safe-area-bottom {
-            padding-bottom: constant(safe-area-inset-bottom);
-            padding-bottom: env(safe-area-inset-bottom);
+        /* 滑动处理 */
+        .touch-handler {
+            touch-action: pan-y;
         }
         
         /* 隐藏类 */
         .hidden {
-            display: none !important;
+            display: none;
         }
         
-        /* 输入框样式 */
-        .input-field {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 15px;
-            color: white;
-            font-size: 1.1rem;
-            width: 100%;
-            margin-bottom: 15px;
+        /* 页脚 */
+        footer {
             text-align: center;
-            -webkit-appearance: none;
-        }
-        
-        .input-field:focus {
-            outline: none;
-            border-color: #ffd700;
-        }
-        
-        .textarea-field {
-            background: rgba(255, 255, 255, 0.08);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            color: white;
-            font-size: 1.1rem;
-            width: 100%;
-            height: 150px;
-            resize: none;
-            font-family: inherit;
-        }
-        
-        .textarea-field:focus {
-            outline: none;
-            border-color: #ffd700;
-        }
-        
-        /* 按钮容器 */
-        .btn-group {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
+            padding: 40px 15px 20px;
+            color: #a8d8ea;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 40px;
         }
         
         /* 流星 */
@@ -453,145 +489,183 @@
             position: fixed;
             width: 2px;
             height: 2px;
-            background: #fff;
+            background: white;
             border-radius: 50%;
-            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1), 0 0 10px 2px #fff;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1), 0 0 10px 2px white;
             z-index: 1;
             pointer-events: none;
         }
         
-        /* 个性化星星 */
-        .personal-star {
+        /* 加载动画 */
+        .loader {
             position: fixed;
-            z-index: 1;
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
         }
         
-        /* 长按提示 */
-        .hint {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.5);
+        .loader-content {
             text-align: center;
-            margin-top: 10px;
+        }
+        
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #ffd93d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- 欢迎界面 -->
-    <div class="welcome-overlay" id="welcomeOverlay">
-        <div class="welcome-content">
-            <h1 class="welcome-title">给朝清的星空</h1>
-            <p class="welcome-text">有些相遇就像夜空中偶然交汇的星光，<br>短暂却明亮，让人忍不住想要多看几眼。</p>
-            <button class="start-btn" id="startBtn">开启星空之旅 ✨</button>
+    <!-- 加载动画 -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <p style="color: #a8d8ea;">加载星空中...</p>
         </div>
     </div>
     
-    <!-- 星空背景 -->
-    <div class="stars-container" id="starsContainer"></div>
+    <!-- 动态星空背景 -->
+    <div class="dynamic-stars" id="dynamicStars"></div>
     
-    <!-- 主内容 -->
-    <div class="container safe-area-top safe-area-bottom">
-        <div class="main-content" id="mainContent">
-            <header>
-                <h1><i class="fas fa-star"></i> 给朝清的星空 <i class="fas fa-star"></i></h1>
-                <p class="subtitle">在这片为你准备的星空下，藏着我想对你说的话</p>
-                
-                <div class="main-star-container">
-                    <div class="main-star" id="mainStar"></div>
-                </div>
-            </header>
-            
-            <!-- 互动卡片 -->
-            <div class="cards-container">
-                <!-- 卡片1: 专属星星命名 -->
-                <div class="card" id="card1">
-                    <div class="card-header">
-                        <div class="card-icon"><i class="fas fa-star-and-crescent"></i></div>
-                        <h3 class="card-title">专属星星命名</h3>
-                    </div>
-                    <div class="card-content">
-                        <p>在星空中命名一颗专属星星，它会永远为你闪烁。</p>
-                        <input type="text" class="input-field" id="starNameInput" placeholder="输入星星的名字" maxlength="10">
-                        <div style="text-align: center;">
-                            <button class="btn primary-btn" id="nameStarBtn">命名这颗星</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 卡片2: 星空信纸 -->
-                <div class="card" id="card2">
-                    <div class="card-header">
-                        <div class="card-icon"><i class="fas fa-feather-alt"></i></div>
-                        <h3 class="card-title">星空信纸</h3>
-                    </div>
-                    <div class="card-content">
-                        <p>写下你想说的话，它会像星光一样永远留在这片夜空。</p>
-                        <textarea class="textarea-field" id="letterText" placeholder="在这里写下你想说的话..."></textarea>
-                        <div class="btn-group">
-                            <button class="btn primary-btn" id="saveLetterBtn">保存</button>
-                            <button class="btn secondary-btn" id="clearLetterBtn">清空</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 卡片3: 流星许愿 -->
-                <div class="card" id="card3">
-                    <div class="card-header">
-                        <div class="card-icon"><i class="fas fa-shooting-star"></i></div>
-                        <h3 class="card-title">流星许愿</h3>
-                    </div>
-                    <div class="card-content">
-                        <p>点击召唤流星，对着流星许下你的愿望。</p>
-                        <div style="text-align: center; margin-top: 15px;">
-                            <button class="btn primary-btn" id="makeWishBtn">召唤流星</button>
-                        </div>
-                        <p class="hint">点击页面任意位置也会出现小星星哦！</p>
-                    </div>
-                </div>
-                
-                <!-- 卡片4: 月相密语 -->
-                <div class="card" id="card4">
-                    <div class="card-header">
-                        <div class="card-icon"><i class="fas fa-moon"></i></div>
-                        <h3 class="card-title">月相密语</h3>
-                    </div>
-                    <div class="card-content">
-                        <p>月有阴晴圆缺，点击月亮听听它今晚想对你说什么。</p>
-                        <div style="text-align: center; margin-top: 15px;">
-                            <div class="moon-container" id="moon">
-                                <div class="moon-shadow" id="moonShadow"></div>
-                            </div>
-                            <div class="moon-message" id="moonMessage">满月当空，美好总是短暂而珍贵</div>
-                        </div>
-                    </div>
-                </div>
+    <div class="container safe-area-top safe-area-bottom touch-handler">
+        <!-- 精美标题 -->
+        <header class="main-header">
+            <div class="title-container">
+                <div class="title-glow"></div>
+                <h1 class="main-title">给朝清的星空诗</h1>
             </div>
+            <p class="subtitle">在这片为你准备的星空下，藏着我想对你说的话</p>
             
-            <!-- 给朝清的专属消息 -->
-            <div class="card" style="margin-top: 20px;">
+            <div class="center-star" id="centerStar">
+                <div class="star-glow"></div>
+                <div class="star-shape"></div>
+            </div>
+        </header>
+        
+        <!-- 卡片网格 -->
+        <div class="cards-grid">
+            <!-- 卡片1: 愿望清单 -->
+            <div class="card">
                 <div class="card-header">
-                    <div class="card-icon"><i class="fas fa-heart"></i></div>
-                    <h3 class="card-title">给朝清的专属消息</h3>
+                    <div class="card-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="card-title">愿望清单</h3>
                 </div>
                 <div class="card-content">
-                    <p style="line-height: 1.6; margin-bottom: 15px;">
-                        朝清，每次和你聊天都像发现一颗新星星，<br>
-                        在无数个平行宇宙中，我很庆幸在这个宇宙遇见了你。<br>
-                        就像星星不会说话，但夜空知道它的存在。
-                    </p>
-                    <div style="margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">
-                        <p style="color: #ffd700; font-style: italic; text-align: center;">
-                            "有些话不必说出口，因为眼神已经传达了一切。<br>
-                            愿这一刻的宁静，成为我们之间最美的语言。"
-                        </p>
+                    <p>写下你的愿望，我会帮你保存并发送到我的邮箱。</p>
+                    <div class="wish-form">
+                        <textarea class="wish-input" id="wishInput" placeholder="写下你的愿望..."></textarea>
+                        <input type="email" class="email-input" id="emailInput" placeholder="你的邮箱地址（可选）">
+                        <div class="btn-group">
+                            <button class="btn btn-primary" id="saveWishBtn">保存愿望</button>
+                            <button class="btn btn-secondary" id="sendWishBtn">发送到我的邮箱</button>
+                        </div>
+                        <div class="wish-list" id="wishList"></div>
                     </div>
                 </div>
             </div>
             
-            <footer>
-                <p>这片星空永远为你保留 ✨</p>
-            </footer>
+            <!-- 卡片2: 星空信纸 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-feather-alt"></i>
+                    </div>
+                    <h3 class="card-title">星空信纸</h3>
+                </div>
+                <div class="card-content">
+                    <p>写下你想说的话，它会像星光一样永远留在这片夜空。</p>
+                    <div style="margin-top: 20px;">
+                        <textarea class="wish-input" id="letterText" placeholder="给朝清的话..."></textarea>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" id="saveLetterBtn">保存</button>
+                            <button class="btn btn-secondary" id="clearLetterBtn">清空</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 卡片3: 月相密语 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <h3 class="card-title">月相密语</h3>
+                </div>
+                <div class="card-content">
+                    <p>月有阴晴圆缺，每个阶段都有不同的密语。点击月亮，听听它今晚想对你说什么。</p>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <div class="moon-container" id="moon" style="width: 100px; height: 100px; margin: 0 auto; background: #f5f5dc; border-radius: 50%; position: relative; overflow: hidden;">
+                            <div class="moon-shadow" id="moonShadow" style="position: absolute; width: 100%; height: 100%; background: #0a0a2a; border-radius: 50%; transform: translateX(0%); transition: transform 1s ease;"></div>
+                        </div>
+                        <div class="moon-message" id="moonMessage" style="margin-top: 10px; font-style: italic; color: #fffacd; min-height: 40px;">满月当空，美好总是短暂而珍贵</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 卡片4: 流星许愿 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-shooting-star"></i>
+                    </div>
+                    <h3 class="card-title">流星许愿</h3>
+                </div>
+                <div class="card-content">
+                    <p>点击召唤流星，对着流星许下你的愿望。</p>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="btn btn-primary" id="makeWishBtn">召唤流星</button>
+                    </div>
+                </div>
+            </div>
         </div>
+        
+        <!-- 给朝清的专属消息 -->
+        <div class="card" style="margin-top: 40px;">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3 class="card-title">给朝清的专属消息</h3>
+            </div>
+            <div class="card-content">
+                <p style="line-height: 1.8; font-size: 1.2rem; margin-bottom: 20px;">
+                    朝清，你知道吗？<br>
+                    每次和你聊天都像在星空中发现一颗新星星，<br>
+                    在无数个平行宇宙中，我很庆幸在这个宇宙遇见了你。<br>
+                    就像星星不会说话，但夜空知道它的存在。
+                </p>
+                <div style="padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 15px; border-left: 4px solid #ffd93d;">
+                    <p style="color: #ffd93d; font-style: italic; text-align: center; font-size: 1.3rem;">
+                        "有些话不必说出口，因为眼神已经传达了一切。<br>
+                        愿这一刻的宁静，成为我们之间最美的语言。"
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>这片星空永远为你保留 ✨</p>
+            <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">长按卡片会有惊喜效果</p>
+        </footer>
     </div>
     
     <!-- 音乐播放器 -->
@@ -615,46 +689,57 @@
         // 等待DOM加载完成
         document.addEventListener('DOMContentLoaded', function() {
             console.log("DOM加载完成，开始初始化");
-            initApp();
+            
+            // 显示加载动画
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                }, 500);
+                
+                // 初始化应用
+                initApp();
+            }, 1500);
         });
         
         // 初始化应用
         function initApp() {
-            // 1. 创建星空背景
-            createStars();
+            // 1. 创建动态星空
+            createDynamicStars();
             
-            // 2. 初始化欢迎界面
-            initWelcomeScreen();
+            // 2. 初始化中央星星
+            initCenterStar();
             
-            // 3. 初始化主星星
-            initMainStar();
-            
-            // 4. 初始化卡片交互
+            // 3. 初始化卡片交互
             initCards();
             
-            // 5. 初始化月亮
+            // 4. 初始化月亮
             initMoon();
             
-            // 6. 初始化音乐播放器
+            // 5. 初始化音乐播放器
             initMusicPlayer();
             
-            // 7. 初始化页面点击效果
-            initPageClickEffects();
+            // 6. 初始化愿望清单
+            initWishList();
             
-            // 8. 开始流星雨
+            // 7. 开始流星雨
             startMeteorShower();
+            
+            // 8. 优化触摸交互
+            initTouchOptimization();
             
             console.log("应用初始化完成");
         }
         
-        // 创建星空背景
-        function createStars() {
-            const container = document.getElementById('starsContainer');
-            const starCount = window.innerWidth < 768 ? 100 : 150;
+        // 创建动态星空
+        function createDynamicStars() {
+            const container = document.getElementById('dynamicStars');
             
-            for (let i = 0; i < starCount; i++) {
+            // 闪烁的星星
+            for (let i = 0; i < 100; i++) {
                 const star = document.createElement('div');
-                star.className = 'star';
+                star.className = 'twinkling-star';
                 
                 // 随机大小
                 const size = Math.random() * 3 + 1;
@@ -668,53 +753,44 @@
                 // 随机亮度
                 star.style.opacity = Math.random() * 0.7 + 0.3;
                 
-                // 随机闪烁动画
+                // 随机动画延迟和时长
                 const duration = Math.random() * 5 + 3;
                 const delay = Math.random() * 5;
                 star.style.animation = `twinkle ${duration}s infinite ${delay}s`;
                 
                 container.appendChild(star);
             }
+            
+            // 移动的星星
+            for (let i = 0; i < 20; i++) {
+                const star = document.createElement('div');
+                star.className = 'moving-star';
+                
+                // 随机位置
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // 随机动画时长
+                const duration = Math.random() * 20 + 10;
+                star.style.animation = `moveStar ${duration}s linear infinite`;
+                
+                container.appendChild(star);
+            }
         }
         
-        // 初始化欢迎界面
-        function initWelcomeScreen() {
-            const welcomeOverlay = document.getElementById('welcomeOverlay');
-            const startBtn = document.getElementById('startBtn');
-            const mainContent = document.getElementById('mainContent');
+        // 初始化中央星星
+        function initCenterStar() {
+            const centerStar = document.getElementById('centerStar');
             
             // 使用标准的click事件
-            startBtn.addEventListener('click', function() {
-                console.log("开始按钮被点击");
-                
-                // 淡出欢迎界面
-                welcomeOverlay.style.transition = 'opacity 0.8s';
-                welcomeOverlay.style.opacity = '0';
-                
-                // 显示主内容
-                setTimeout(() => {
-                    welcomeOverlay.classList.add('hidden');
-                    mainContent.classList.add('show');
-                    
-                    // 尝试播放音乐
-                    playBackgroundMusic();
-                }, 800);
-            });
-        }
-        
-        // 初始化主星星
-        function initMainStar() {
-            const mainStar = document.getElementById('mainStar');
-            
-            // 使用标准的click事件
-            mainStar.addEventListener('click', function(e) {
+            centerStar.addEventListener('click', function(e) {
                 e.stopPropagation();
-                console.log("主星星被点击");
+                console.log("中央星星被点击");
                 
-                // 重置动画
+                // 添加脉冲效果
                 this.style.animation = 'none';
                 void this.offsetWidth; // 触发重绘
-                this.style.animation = 'twinkle 2s infinite alternate';
+                this.style.animation = 'starFloat 6s ease-in-out infinite';
                 
                 // 创建粒子效果
                 createStarParticles(this.getBoundingClientRect());
@@ -726,76 +802,44 @@
         
         // 初始化卡片交互
         function initCards() {
-            // 卡片1: 专属星星命名
-            const nameStarBtn = document.getElementById('nameStarBtn');
-            const starNameInput = document.getElementById('starNameInput');
-            
-            nameStarBtn.addEventListener('click', function() {
-                const starName = starNameInput.value.trim();
-                
-                if (starName) {
-                    // 保存到本地存储
-                    localStorage.setItem('personalStarName', starName);
+            // 为每个卡片添加点击效果
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                // 点击效果
+                card.addEventListener('click', function(e) {
+                    // 防止事件冒泡
+                    if (e.target.tagName === 'BUTTON' || 
+                        e.target.tagName === 'TEXTAREA' || 
+                        e.target.tagName === 'INPUT') {
+                        return;
+                    }
                     
-                    // 显示消息
-                    showMessage(`已命名星星: ${starName} ✨`);
-                    
-                    // 清空输入框
-                    starNameInput.value = '';
-                    
-                    // 创建一颗新星星
-                    createNewStar(starName);
-                } else {
-                    showMessage("请输入星星的名字");
-                }
-            });
-            
-            // 卡片2: 星空信纸
-            const saveLetterBtn = document.getElementById('saveLetterBtn');
-            const clearLetterBtn = document.getElementById('clearLetterBtn');
-            const letterText = document.getElementById('letterText');
-            
-            // 加载已保存的信件
-            const savedLetter = localStorage.getItem('starLetter');
-            if (savedLetter) {
-                letterText.value = savedLetter;
-            }
-            
-            saveLetterBtn.addEventListener('click', function() {
-                const letter = letterText.value.trim();
-                
-                if (letter) {
-                    localStorage.setItem('starLetter', letter);
-                    showMessage("信件已保存到星空中 ✨");
-                    
-                    // 创建信件星星特效
-                    createLetterStars();
-                } else {
-                    showMessage("请先写下一些内容");
-                }
-            });
-            
-            clearLetterBtn.addEventListener('click', function() {
-                if (letterText.value.trim() && confirm("确定要清空信件吗？")) {
-                    letterText.value = '';
-                    localStorage.removeItem('starLetter');
-                    showMessage("信件已清空");
-                }
-            });
-            
-            // 卡片3: 流星许愿
-            const makeWishBtn = document.getElementById('makeWishBtn');
-            
-            makeWishBtn.addEventListener('click', function() {
-                // 创建多个流星
-                for (let i = 0; i < 5; i++) {
+                    // 添加点击效果
+                    this.style.transform = 'translateY(-5px)';
                     setTimeout(() => {
-                        createMeteor();
-                    }, i * 300);
-                }
+                        this.style.transform = 'translateY(0)';
+                    }, 200);
+                });
                 
-                // 显示消息
-                showMessage("流星已出发，快许个愿吧！ 🌠");
+                // 长按效果
+                let pressTimer;
+                card.addEventListener('touchstart', function() {
+                    pressTimer = setTimeout(() => {
+                        this.style.boxShadow = '0 0 30px rgba(255, 217, 61, 0.3)';
+                        showMessage("✨");
+                    }, 800);
+                }, { passive: true });
+                
+                card.addEventListener('touchend', function() {
+                    clearTimeout(pressTimer);
+                    setTimeout(() => {
+                        this.style.boxShadow = '';
+                    }, 500);
+                }, { passive: true });
+                
+                card.addEventListener('touchmove', function() {
+                    clearTimeout(pressTimer);
+                }, { passive: true });
             });
         }
         
@@ -853,7 +897,7 @@
                         updateMusicUI(true);
                     }).catch(err => {
                         console.log("播放失败:", err);
-                        showMessage("点击页面任意位置后，再点击播放按钮");
+                        showMessage("请先点击页面任意位置，再播放音乐");
                     });
                 } else {
                     music.pause();
@@ -879,60 +923,131 @@
             });
         }
         
-        // 播放背景音乐
-        function playBackgroundMusic() {
-            const music = document.getElementById('backgroundMusic');
-            const playBtn = document.getElementById('playBtn');
-            const musicInfo = document.getElementById('musicInfo');
+        // 初始化愿望清单
+        function initWishList() {
+            const saveWishBtn = document.getElementById('saveWishBtn');
+            const sendWishBtn = document.getElementById('sendWishBtn');
+            const wishInput = document.getElementById('wishInput');
+            const emailInput = document.getElementById('emailInput');
+            const wishList = document.getElementById('wishList');
             
-            // iOS需要用户交互才能播放音频
-            // 所以我们先尝试播放，如果失败就等待用户点击播放按钮
-            const playPromise = music.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    // 播放成功
-                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                    musicInfo.textContent = "正在播放: 星空小夜曲";
-                }).catch(error => {
-                    // 播放失败，等待用户交互
-                    console.log("自动播放失败，等待用户交互");
-                });
-            }
-        }
-        
-        // 初始化页面点击效果
-        function initPageClickEffects() {
-            // 点击页面任意位置创建小星星
-            document.addEventListener('click', function(e) {
-                // 排除按钮和输入框的点击
-                if (e.target.tagName === 'BUTTON' || 
-                    e.target.tagName === 'INPUT' || 
-                    e.target.tagName === 'TEXTAREA' ||
-                    e.target.closest('.card') ||
-                    e.target.closest('.music-player')) {
+            // 保存愿望
+            saveWishBtn.addEventListener('click', function() {
+                const wishText = wishInput.value.trim();
+                const email = emailInput.value.trim();
+                
+                if (!wishText) {
+                    showMessage("请输入愿望内容");
                     return;
                 }
                 
-                createClickStar(e.clientX, e.clientY);
+                // 获取现有愿望
+                let wishes = JSON.parse(localStorage.getItem('starWishes') || '[]');
+                
+                // 添加新愿望
+                const newWish = {
+                    id: Date.now(),
+                    text: wishText,
+                    email: email,
+                    timestamp: new Date().toLocaleString()
+                };
+                
+                wishes.push(newWish);
+                localStorage.setItem('starWishes', JSON.stringify(wishes));
+                
+                // 更新愿望列表显示
+                updateWishListDisplay();
+                
+                // 清空输入框
+                wishInput.value = '';
+                
+                // 显示消息
+                showMessage("愿望已保存到星空中 ✨");
+                
+                // 创建愿望星星
+                createWishStar();
             });
+            
+            // 发送愿望到邮箱
+            sendWishBtn.addEventListener('click', function() {
+                const wishes = JSON.parse(localStorage.getItem('starWishes') || '[]');
+                
+                if (wishes.length === 0) {
+                    showMessage("还没有保存的愿望");
+                    return;
+                }
+                
+                // 构建邮件内容
+                const subject = "来自朝清的星空愿望清单";
+                let body = "以下是从星空愿望清单中收集的愿望：\n\n";
+                
+                wishes.forEach((wish, index) => {
+                    body += `${index + 1}. ${wish.text}\n`;
+                    if (wish.email) {
+                        body += `   邮箱: ${wish.email}\n`;
+                    }
+                    body += `   时间: ${wish.timestamp}\n\n`;
+                });
+                
+                // 添加你的邮箱地址
+                const yourEmail = "709966188@qq.com"; // 替换为你的邮箱
+                
+                // 创建mailto链接
+                const mailtoLink = `mailto:${yourEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                
+                // 打开邮件客户端
+                window.location.href = mailtoLink;
+                
+                // 显示消息
+                showMessage("正在打开邮件客户端...");
+            });
+            
+            // 初始化愿望列表显示
+            function updateWishListDisplay() {
+                const wishes = JSON.parse(localStorage.getItem('starWishes') || '[]');
+                
+                if (wishes.length === 0) {
+                    wishList.innerHTML = '<p style="color: #a8d8ea; text-align: center;">暂无愿望，写下第一个愿望吧</p>';
+                    return;
+                }
+                
+                wishList.innerHTML = '';
+                wishes.forEach(wish => {
+                    const wishItem = document.createElement('div');
+                    wishItem.className = 'wish-item';
+                    wishItem.innerHTML = `
+                        <p>${wish.text}</p>
+                        <div style="font-size: 0.8rem; color: #a8d8ea; margin-top: 5px;">
+                            ${wish.timestamp}
+                        </div>
+                    `;
+                    wishList.appendChild(wishItem);
+                });
+            }
+            
+            // 初始加载愿望列表
+            updateWishListDisplay();
         }
         
-        // 创建点击星星
-        function createClickStar(x, y) {
+        // 创建愿望星星
+        function createWishStar() {
             const star = document.createElement('div');
-            star.className = 'personal-star';
-            star.innerHTML = '★';
-            star.style.color = '#fffacd';
-            star.style.fontSize = `${Math.random() * 20 + 15}px`;
-            star.style.left = `${x}px`;
-            star.style.top = `${y}px`;
-            star.style.opacity = '0.9';
-            star.style.transform = 'scale(0)';
+            star.style.position = 'fixed';
+            star.style.fontSize = '20px';
+            star.style.color = '#ffd93d';
+            star.style.zIndex = '1';
+            star.style.pointerEvents = 'none';
+            star.innerHTML = '⭐';
+            
+            // 随机位置
+            const x = Math.random() * 80 + 10;
+            const y = Math.random() * 80 + 10;
+            star.style.left = `${x}%`;
+            star.style.top = `${y}%`;
             
             document.body.appendChild(star);
             
-            // 星星出现动画
+            // 动画效果
             star.animate([
                 { transform: 'scale(0) rotate(0deg)', opacity: 0 },
                 { transform: 'scale(1) rotate(360deg)', opacity: 1 }
@@ -941,7 +1056,7 @@
                 easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
             });
             
-            // 3秒后淡出
+            // 5秒后淡出
             setTimeout(() => {
                 star.animate([
                     { transform: 'scale(1) rotate(0deg)', opacity: 1 },
@@ -954,106 +1069,7 @@
                         document.body.removeChild(star);
                     }
                 };
-            }, 3000);
-        }
-        
-        // 创建星星粒子效果
-        function createStarParticles(rect) {
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            
-            for (let i = 0; i < 8; i++) {
-                setTimeout(() => {
-                    const particle = document.createElement('div');
-                    particle.style.position = 'fixed';
-                    particle.style.width = '8px';
-                    particle.style.height = '8px';
-                    particle.style.borderRadius = '50%';
-                    particle.style.backgroundColor = '#ffd700';
-                    particle.style.left = `${centerX}px`;
-                    particle.style.top = `${centerY}px`;
-                    particle.style.zIndex = '1';
-                    particle.style.pointerEvents = 'none';
-                    particle.style.boxShadow = '0 0 10px #ffd700';
-                    
-                    document.body.appendChild(particle);
-                    
-                    // 粒子爆炸效果
-                    const angle = Math.random() * Math.PI * 2;
-                    const distance = Math.random() * 50 + 30;
-                    const duration = Math.random() * 1000 + 500;
-                    
-                    particle.animate([
-                        { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                        { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`, opacity: 0 }
-                    ], {
-                        duration: duration,
-                        easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
-                    }).onfinish = () => {
-                        if (particle.parentNode) {
-                            document.body.removeChild(particle);
-                        }
-                    };
-                }, i * 50);
-            }
-        }
-        
-        // 创建新星星
-        function createNewStar(name) {
-            const star = document.createElement('div');
-            star.className = 'personal-star';
-            star.innerHTML = '⭐';
-            star.style.color = '#ffd700';
-            star.style.fontSize = '24px';
-            star.style.left = `${Math.random() * 70 + 15}%`;
-            star.style.top = `${Math.random() * 70 + 15}%`;
-            star.style.opacity = '0.9';
-            star.title = `给朝清的星星: ${name}`;
-            
-            // 添加动画
-            star.style.animation = `twinkle ${Math.random() * 3 + 2}s infinite alternate`;
-            
-            document.body.appendChild(star);
-            
-            // 5秒后移除
-            setTimeout(() => {
-                if (star.parentNode) {
-                    star.style.transition = 'opacity 1s';
-                    star.style.opacity = '0';
-                    setTimeout(() => {
-                        if (star.parentNode) {
-                            document.body.removeChild(star);
-                        }
-                    }, 1000);
-                }
             }, 5000);
-        }
-        
-        // 创建信件星星
-        function createLetterStars() {
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    const star = document.createElement('div');
-                    star.className = 'personal-star';
-                    star.innerHTML = '✉';
-                    star.style.color = '#a8d8ea';
-                    star.style.fontSize = '20px';
-                    star.style.left = `${Math.random() * 80 + 10}%`;
-                    star.style.top = `${Math.random() * 80 + 10}%`;
-                    star.style.opacity = '0.8';
-                    
-                    document.body.appendChild(star);
-                    
-                    // 5秒后淡出
-                    setTimeout(() => {
-                        star.style.transition = 'opacity 1s';
-                        star.style.opacity = '0';
-                        setTimeout(() => {
-                            if (star.parentNode) star.remove();
-                        }, 1000);
-                    }, 5000);
-                }, i * 300);
-            }
         }
         
         // 开始流星雨
@@ -1064,6 +1080,20 @@
                     createMeteor();
                 }
             }, 8000);
+            
+            // 初始化流星许愿按钮
+            const makeWishBtn = document.getElementById('makeWishBtn');
+            makeWishBtn.addEventListener('click', function() {
+                // 创建多个流星
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        createMeteor();
+                    }, i * 300);
+                }
+                
+                // 显示消息
+                showMessage("流星已出发，快许个愿吧！ 🌠");
+            });
         }
         
         // 创建流星
@@ -1093,6 +1123,88 @@
             };
         }
         
+        // 创建星星粒子效果
+        function createStarParticles(rect) {
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'fixed';
+                    particle.style.width = '8px';
+                    particle.style.height = '8px';
+                    particle.style.borderRadius = '50%';
+                    particle.style.backgroundColor = '#ffd93d';
+                    particle.style.left = `${centerX}px`;
+                    particle.style.top = `${centerY}px`;
+                    particle.style.zIndex = '1';
+                    particle.style.pointerEvents = 'none';
+                    particle.style.boxShadow = '0 0 10px #ffd93d';
+                    
+                    document.body.appendChild(particle);
+                    
+                    // 粒子爆炸效果
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * 50 + 30;
+                    const duration = Math.random() * 1000 + 500;
+                    
+                    particle.animate([
+                        { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                        { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`, opacity: 0 }
+                    ], {
+                        duration: duration,
+                        easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+                    }).onfinish = () => {
+                        if (particle.parentNode) {
+                            document.body.removeChild(particle);
+                        }
+                    };
+                }, i * 50);
+            }
+        }
+        
+        // 优化触摸交互
+        function initTouchOptimization() {
+            // 为所有按钮添加触摸效果
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.95)';
+                }, { passive: true });
+                
+                button.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                }, { passive: true });
+            });
+            
+            // 解决滑动冲突
+            let startY = 0;
+            let isScrolling = false;
+            
+            document.addEventListener('touchstart', function(e) {
+                startY = e.touches[0].clientY;
+                isScrolling = false;
+            }, { passive: true });
+            
+            document.addEventListener('touchmove', function(e) {
+                const currentY = e.touches[0].clientY;
+                const deltaY = Math.abs(currentY - startY);
+                
+                if (deltaY > 10) {
+                    isScrolling = true;
+                }
+            }, { passive: true });
+            
+            // 在输入框和文本区域上允许滚动
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('touchstart', function(e) {
+                    e.stopPropagation();
+                }, { passive: true });
+            });
+        }
+        
         // 显示消息提示
         function showMessage(text) {
             const toast = document.getElementById('messageToast');
@@ -1104,19 +1216,62 @@
             }, 3000);
         }
         
-        // 修复iOS滚动问题
-        document.addEventListener('touchmove', function(e) {
-            // 允许textarea和input滚动
-            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
-                return;
-            }
-            
-            // 阻止页面滚动
-            e.preventDefault();
-        }, { passive: false });
+        // 初始化星空信纸功能
+        const saveLetterBtn = document.getElementById('saveLetterBtn');
+        const clearLetterBtn = document.getElementById('clearLetterBtn');
+        const letterText = document.getElementById('letterText');
         
-        // 修复iOS点击延迟
-        document.addEventListener('touchstart', function() {}, { passive: true });
+        // 加载已保存的信件
+        const savedLetter = localStorage.getItem('starLetter');
+        if (savedLetter) {
+            letterText.value = savedLetter;
+        }
+        
+        saveLetterBtn.addEventListener('click', function() {
+            const letter = letterText.value.trim();
+            
+            if (letter) {
+                localStorage.setItem('starLetter', letter);
+                showMessage("信件已保存到星空中 ✨");
+                
+                // 创建信件星星特效
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const star = document.createElement('div');
+                        star.style.position = 'fixed';
+                        star.style.fontSize = '20px';
+                        star.style.color = '#a8d8ea';
+                        star.style.left = `${Math.random() * 80 + 10}%`;
+                        star.style.top = `${Math.random() * 80 + 10}%`;
+                        star.style.zIndex = '1';
+                        star.style.pointerEvents = 'none';
+                        star.innerHTML = '✉';
+                        
+                        document.body.appendChild(star);
+                        
+                        setTimeout(() => {
+                            if (star.parentNode) {
+                                star.style.transition = 'opacity 1s';
+                                star.style.opacity = '0';
+                                setTimeout(() => {
+                                    if (star.parentNode) star.remove();
+                                }, 1000);
+                            }
+                        }, 3000);
+                    }, i * 300);
+                }
+            } else {
+                showMessage("请先写下一些内容");
+            }
+        });
+        
+        clearLetterBtn.addEventListener('click', function() {
+            if (letterText.value.trim() && confirm("确定要清空信件吗？")) {
+                letterText.value = '';
+                localStorage.removeItem('starLetter');
+                showMessage("信件已清空");
+            }
+        });
     </script>
 </body>
 </html>
