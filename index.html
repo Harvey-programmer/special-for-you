@@ -794,10 +794,14 @@
     <!-- 消息提示 -->
     <div class="message-toast" id="messageToast"></div>
     
-    <!-- 音频元素 - 使用可靠的音频源 -->
-    <audio id="backgroundMusic" preload="none" loop>
-        <!-- 使用可靠的在线音乐源 -->
-        <source src="https://assets.mixkit.co/music/preview/mixkit-night-snow-1145.mp3" type="audio/mpeg">
+    <!-- 音频元素 - 使用多个备用音乐源 -->
+    <audio id="backgroundMusic" preload="metadata" loop>
+        <!-- 主音乐源 - 使用可靠的音频源 -->
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/19/audio_8a5a6f2c4c.mp3" type="audio/mpeg">
+        <!-- 备用音乐源1 -->
+        <source src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_c5c5c5c5c5.mp3" type="audio/mpeg">
+        <!-- 备用音乐源2 -->
+        <source src="https://assets.mixkit.co/music/preview/mixkit-clear-sky-479.mp3" type="audio/mpeg">
         您的浏览器不支持音频元素。
     </audio>
 
@@ -941,7 +945,7 @@
             let isPlaying = false;
             let audioInitialized = false;
             
-            // 初始化音频状态显示
+            // 更新音乐状态显示
             function updateMusicStatus(playing) {
                 isPlaying = playing;
                 if (playing) {
@@ -1026,7 +1030,8 @@
             // 音频加载失败处理
             music.addEventListener('error', function() {
                 console.log("音频加载失败");
-                showMessage("音乐加载失败，请检查网络连接");
+                showMessage("音乐加载失败，正在尝试其他音乐源...");
+                // 可以在这里添加备用音乐源切换逻辑
             });
             
             // 监听音频播放结束
