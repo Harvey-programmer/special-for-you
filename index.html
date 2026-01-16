@@ -388,7 +388,7 @@
             transform: translateX(-50%) translateY(0);
         }
         
-        /* 音乐播放器 */
+        /* 音乐播放器 - 修复iOS播放问题 */
         .music-player {
             position: fixed;
             bottom: 20px;
@@ -522,43 +522,53 @@
             }
         }
         
-        /* 新功能：星空记忆相册 */
-        .photo-album {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
+        /* 新功能：星空日记本 */
+        .diary-container {
             margin-top: 20px;
         }
         
-        .photo-item {
+        .diary-input {
             width: 100%;
-            height: 150px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+            min-height: 150px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+        
+        .diary-input:focus {
+            outline: none;
+            border-color: #ffd93d;
+        }
+        
+        .diary-entries {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .diary-entry {
             background: rgba(255, 255, 255, 0.05);
+            padding: 12px 15px;
             border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            cursor: pointer;
+            margin-bottom: 10px;
+            border-left: 3px solid #a8d8ea;
         }
         
-        .photo-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-        
-        .photo-item:hover img {
-            transform: scale(1.1);
-        }
-        
-        .photo-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
+        .diary-date {
+            font-size: 0.8rem;
             color: #a8d8ea;
-            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .diary-content {
+            font-size: 1rem;
+            line-height: 1.5;
         }
         
         /* 数据管理面板 */
@@ -714,28 +724,23 @@
                 </div>
             </div>
             
-            <!-- 卡片2: 星空记忆相册（替代原来的星空信纸） -->
+            <!-- 卡片2: 星空日记本（替代原来的星空记忆相册） -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">
-                        <i class="fas fa-images"></i>
+                        <i class="fas fa-book"></i>
                     </div>
-                    <h3 class="card-title">星空记忆相册</h3>
+                    <h3 class="card-title">星空日记本</h3>
                 </div>
                 <div class="card-content">
-                    <p>上传美好的回忆照片，保存在这片星空中。照片只保存在您的手机本地。</p>
-                    <div style="margin-top: 20px;">
-                        <div class="photo-album" id="photoAlbum">
-                            <!-- 照片将由JavaScript动态添加 -->
-                            <div class="photo-item" id="addPhotoBtn">
-                                <div class="photo-placeholder">
-                                    <i class="fas fa-plus"></i>
-                                </div>
-                            </div>
+                    <p>记录每天的心情和想法，保存到这片星空中。日记只保存在您的手机本地。</p>
+                    <div class="diary-container">
+                        <textarea class="diary-input" id="diaryInput" placeholder="今天发生了什么？写下你的心情..." maxlength="1000"></textarea>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" id="saveDiaryBtn">保存日记</button>
+                            <button class="btn btn-secondary" id="clearDiaryBtn">清空输入</button>
                         </div>
-                        <p style="color: #a8d8ea; font-size: 0.9rem; margin-top: 15px; text-align: center;">
-                            照片仅保存在您的手机本地，不会上传到服务器
-                        </p>
+                        <div class="diary-entries" id="diaryEntries"></div>
                     </div>
                 </div>
             </div>
@@ -768,7 +773,7 @@
         <footer>
             <p>这片星空永远为你保留 ✨</p>
             <p style="margin-top: 10px; font-size: 0.8rem; color: #a8d8ea;">
-                数据保存说明：愿望和照片保存在您的手机浏览器本地，不会上传到服务器
+                数据保存说明：愿望和日记保存在您的手机浏览器本地，不会上传到服务器
             </p>
         </footer>
     </div>
@@ -784,14 +789,13 @@
     <!-- 消息提示 -->
     <div class="message-toast" id="messageToast"></div>
     
-    <!-- 音频元素 -->
-    <audio id="backgroundMusic" preload="auto">
+    <!-- 音频元素 - 修复iOS播放问题 -->
+    <audio id="backgroundMusic" preload="none">
+        <!-- 使用多个音乐源，增加播放成功的几率 -->
         <source src="https://assets.mixkit.co/music/preview/mixkit-stars-1189.mp3" type="audio/mpeg">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-night-snow-1145.mp3" type="audio/mpeg">
         您的浏览器不支持音频元素。
     </audio>
-    
-    <!-- 隐藏的文件输入框用于照片上传 -->
-    <input type="file" id="photoUploadInput" accept="image/*" style="display: none;" multiple>
 
     <script>
         // 等待DOM加载完成
@@ -828,8 +832,8 @@
             // 6. 开始流星雨
             startMeteorShower();
             
-            // 7. 初始化相册功能
-            initPhotoAlbum();
+            // 7. 初始化日记本功能
+            initDiary();
             
             console.log("应用初始化完成");
         }
@@ -906,8 +910,7 @@
                     // 防止事件冒泡
                     if (e.target.tagName === 'BUTTON' || 
                         e.target.tagName === 'TEXTAREA' || 
-                        e.target.tagName === 'INPUT' ||
-                        e.target.closest('.photo-item')) {
+                        e.target.tagName === 'INPUT') {
                         return;
                     }
                     
@@ -920,7 +923,7 @@
             });
         }
         
-        // 初始化音乐播放器
+        // 初始化音乐播放器 - 修复iOS播放问题
         function initMusicPlayer() {
             const music = document.getElementById('backgroundMusic');
             const playBtn = document.getElementById('playBtn');
@@ -929,21 +932,43 @@
             // 设置初始音量
             music.volume = 0.3;
             
-            // 播放/暂停按钮
-            playBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                
+            // 记录是否已尝试播放
+            let hasTriedToPlay = false;
+            
+            // 修复iOS播放问题的函数
+            function playMusic() {
                 if (music.paused) {
-                    music.play().then(() => {
-                        updateMusicUI(true);
-                    }).catch(err => {
-                        console.log("播放失败:", err);
-                        showMessage("请先点击页面任意位置，再播放音乐");
-                    });
+                    const playPromise = music.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            // 播放成功
+                            updateMusicUI(true);
+                            hasTriedToPlay = true;
+                        }).catch(error => {
+                            console.log("播放失败:", error);
+                            
+                            if (!hasTriedToPlay) {
+                                // 第一次尝试失败，可能是iOS限制
+                                showMessage("请点击页面任意位置，然后再次点击播放按钮");
+                                hasTriedToPlay = true;
+                            } else {
+                                showMessage("播放失败，请检查网络或稍后重试");
+                            }
+                            
+                            updateMusicUI(false);
+                        });
+                    }
                 } else {
                     music.pause();
                     updateMusicUI(false);
                 }
+            }
+            
+            // 播放/暂停按钮
+            playBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                playMusic();
             });
             
             // 更新音乐UI
@@ -956,6 +981,37 @@
                     musicInfo.textContent = "点击播放音乐";
                 }
             }
+            
+            // 尝试在用户与页面交互后自动播放音乐
+            let userInteracted = false;
+            
+            // 监听页面点击事件
+            document.addEventListener('click', function() {
+                if (!userInteracted) {
+                    userInteracted = true;
+                    
+                    // 用户首次点击后，尝试播放音乐
+                    if (music.paused) {
+                        setTimeout(() => {
+                            const playPromise = music.play();
+                            if (playPromise !== undefined) {
+                                playPromise.then(() => {
+                                    updateMusicUI(true);
+                                }).catch(error => {
+                                    // 自动播放失败，等待用户手动点击播放按钮
+                                    console.log("自动播放失败，等待用户手动播放");
+                                });
+                            }
+                        }, 500);
+                    }
+                }
+            }, { once: true }); // 只监听一次
+            
+            // 音频加载失败处理
+            music.addEventListener('error', function() {
+                musicInfo.textContent = "音乐加载失败";
+                playBtn.style.opacity = '0.5';
+            });
         }
         
         // 初始化验证系统
@@ -968,7 +1024,7 @@
             // 设置验证码
             // 这里可以设置一个只有温朝清知道的验证码
             // 例如：她的生日0325，或者其他有意义的数字
-            const correctCode = "0503"; // 可以修改为您设置的验证码
+            const correctCode = "0325"; // 可以修改为您设置的验证码
             
             // 验证按钮点击事件
             verifyBtn.addEventListener('click', function() {
@@ -1108,7 +1164,7 @@
                 // 使用mailto链接
                 const subject = "来自星空愿望清单的愿望";
                 const body = encodeURIComponent(mailContent);
-                const mailtoLink = `mailto:709966188@qq.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+                const mailtoLink = `mailto:your_email@example.com?subject=${encodeURIComponent(subject)}&body=${body}`;
                 
                 // 打开邮件客户端
                 window.open(mailtoLink, '_blank');
@@ -1242,112 +1298,80 @@
             updateWishStats();
         }
         
-        // 初始化相册功能
-        function initPhotoAlbum() {
-            const addPhotoBtn = document.getElementById('addPhotoBtn');
-            const photoAlbum = document.getElementById('photoAlbum');
-            const photoUploadInput = document.getElementById('photoUploadInput');
+        // 初始化日记本功能
+        function initDiary() {
+            const saveDiaryBtn = document.getElementById('saveDiaryBtn');
+            const clearDiaryBtn = document.getElementById('clearDiaryBtn');
+            const diaryInput = document.getElementById('diaryInput');
+            const diaryEntries = document.getElementById('diaryEntries');
             
-            // 加载已保存的照片
-            function loadSavedPhotos() {
-                const savedPhotos = JSON.parse(localStorage.getItem('starPhotos') || '[]');
+            // 加载已保存的日记
+            function loadDiaryEntries() {
+                const entries = JSON.parse(localStorage.getItem('starDiary') || '[]');
                 
-                // 清空相册（保留添加按钮）
-                photoAlbum.innerHTML = '';
-                
-                // 添加已保存的照片
-                savedPhotos.forEach((photoData, index) => {
-                    addPhotoToAlbum(photoData, index);
-                });
-                
-                // 添加添加按钮
-                photoAlbum.appendChild(addPhotoBtn);
-            }
-            
-            // 添加照片到相册
-            function addPhotoToAlbum(photoData, index) {
-                const photoItem = document.createElement('div');
-                photoItem.className = 'photo-item';
-                
-                const img = document.createElement('img');
-                img.src = photoData.dataUrl;
-                img.alt = `星空记忆 ${index + 1}`;
-                
-                // 添加点击删除功能
-                img.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    if (confirm("确定要删除这张照片吗？")) {
-                        deletePhoto(index);
-                    }
-                });
-                
-                photoItem.appendChild(img);
-                photoAlbum.insertBefore(photoItem, addPhotoBtn);
-            }
-            
-            // 删除照片
-            function deletePhoto(index) {
-                const savedPhotos = JSON.parse(localStorage.getItem('starPhotos') || '[]');
-                savedPhotos.splice(index, 1);
-                localStorage.setItem('starPhotos', JSON.stringify(savedPhotos));
-                loadSavedPhotos();
-                showMessage("照片已删除");
-            }
-            
-            // 添加照片按钮点击事件
-            addPhotoBtn.addEventListener('click', function() {
-                photoUploadInput.click();
-            });
-            
-            // 文件上传处理
-            photoUploadInput.addEventListener('change', function(e) {
-                const files = e.target.files;
-                if (!files.length) return;
-                
-                // 获取已保存的照片
-                let savedPhotos = JSON.parse(localStorage.getItem('starPhotos') || '[]');
-                
-                // 限制最多保存9张照片
-                if (savedPhotos.length + files.length > 9) {
-                    showMessage("最多只能保存9张照片");
+                if (entries.length === 0) {
+                    diaryEntries.innerHTML = '<p style="color: #a8d8ea; text-align: center; padding: 20px;">还没有日记，写下第一篇日记吧</p>';
                     return;
                 }
                 
-                // 处理每个文件
-                Array.from(files).forEach((file, fileIndex) => {
-                    if (!file.type.startsWith('image/')) {
-                        showMessage(`文件 ${file.name} 不是图片文件`);
-                        return;
-                    }
-                    
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        // 将图片数据保存到本地存储
-                        savedPhotos.push({
-                            name: file.name,
-                            type: file.type,
-                            size: file.size,
-                            dataUrl: e.target.result,
-                            uploadTime: new Date().toLocaleString('zh-CN')
-                        });
-                        
-                        localStorage.setItem('starPhotos', JSON.stringify(savedPhotos));
-                        
-                        // 如果是最后一个文件，重新加载相册
-                        if (fileIndex === files.length - 1) {
-                            loadSavedPhotos();
-                            showMessage(`成功添加 ${files.length} 张照片`);
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                });
+                diaryEntries.innerHTML = '';
                 
-                // 清空文件输入框，以便可以再次选择相同的文件
-                photoUploadInput.value = '';
+                // 按时间倒序排列
+                entries.sort((a, b) => b.id - a.id).forEach(entry => {
+                    const entryElement = document.createElement('div');
+                    entryElement.className = 'diary-entry';
+                    entryElement.innerHTML = `
+                        <div class="diary-date">${entry.date}</div>
+                        <div class="diary-content">${entry.content}</div>
+                    `;
+                    diaryEntries.appendChild(entryElement);
+                });
+            }
+            
+            // 保存日记
+            saveDiaryBtn.addEventListener('click', function() {
+                const content = diaryInput.value.trim();
+                
+                if (!content) {
+                    showMessage("请输入日记内容");
+                    return;
+                }
+                
+                // 获取现有日记
+                let entries = JSON.parse(localStorage.getItem('starDiary') || '[]');
+                
+                // 添加新日记
+                const newEntry = {
+                    id: Date.now(),
+                    content: content,
+                    date: new Date().toLocaleString('zh-CN')
+                };
+                
+                entries.push(newEntry);
+                localStorage.setItem('starDiary', JSON.stringify(entries));
+                
+                // 重新加载日记
+                loadDiaryEntries();
+                
+                // 清空输入框
+                diaryInput.value = '';
+                
+                // 显示消息
+                showMessage("日记已保存 ✨");
+                
+                // 创建日记星星
+                createDiaryStar();
             });
             
-            // 初始加载照片
-            loadSavedPhotos();
+            // 清空输入框
+            clearDiaryBtn.addEventListener('click', function() {
+                if (diaryInput.value.trim() && confirm("确定要清空输入框吗？")) {
+                    diaryInput.value = '';
+                }
+            });
+            
+            // 初始加载日记
+            loadDiaryEntries();
         }
         
         // 创建愿望星星
@@ -1359,6 +1383,49 @@
             star.style.zIndex = '1';
             star.style.pointerEvents = 'none';
             star.innerHTML = '⭐';
+            
+            // 随机位置
+            const x = Math.random() * 80 + 10;
+            const y = Math.random() * 80 + 10;
+            star.style.left = `${x}%`;
+            star.style.top = `${y}%`;
+            
+            document.body.appendChild(star);
+            
+            // 动画效果
+            star.animate([
+                { transform: 'scale(0) rotate(0deg)', opacity: 0 },
+                { transform: 'scale(1) rotate(360deg)', opacity: 1 }
+            ], {
+                duration: 500,
+                easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+            });
+            
+            // 5秒后淡出
+            setTimeout(() => {
+                star.animate([
+                    { transform: 'scale(1) rotate(0deg)', opacity: 1 },
+                    { transform: 'scale(0) rotate(360deg)', opacity: 0 }
+                ], {
+                    duration: 1000,
+                    easing: 'ease-out'
+                }).onfinish = () => {
+                    if (star.parentNode) {
+                        document.body.removeChild(star);
+                    }
+                };
+            }, 5000);
+        }
+        
+        // 创建日记星星
+        function createDiaryStar() {
+            const star = document.createElement('div');
+            star.style.position = 'fixed';
+            star.style.fontSize = '20px';
+            star.style.color = '#a8d8ea';
+            star.style.zIndex = '1';
+            star.style.pointerEvents = 'none';
+            star.innerHTML = '📓';
             
             // 随机位置
             const x = Math.random() * 80 + 10;
