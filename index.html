@@ -394,8 +394,8 @@
             transform: translateX(-50%) translateY(0);
         }
         
-        /* 音效开关 */
-        .sound-toggle {
+        /* 音乐播放器 - 重新设计，修复iOS播放问题 */
+        .music-player {
             position: fixed;
             bottom: 20px;
             right: 20px;
@@ -412,7 +412,7 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
         
-        .sound-btn {
+        .music-btn {
             background: transparent;
             border: none;
             color: #a8d8ea;
@@ -426,7 +426,7 @@
             justify-content: center;
         }
         
-        .sound-info {
+        .music-info {
             color: #a8d8ea;
             font-size: 0.9rem;
             white-space: nowrap;
@@ -612,36 +612,25 @@
             margin-top: 5px;
         }
         
-        /* 状态指示器 */
-        .status-indicator {
+        /* 音乐状态指示器 */
+        .music-status {
             width: 8px;
             height: 8px;
             border-radius: 50%;
             background-color: #ff6b6b;
             margin-right: 8px;
             display: inline-block;
+            animation: musicPulse 1.5s infinite;
         }
         
-        .status-indicator.active {
+        .music-status.playing {
             background-color: #1dd1a1;
+            animation: musicPulse 0.8s infinite;
         }
         
-        /* 星空音效按钮 */
-        .sound-effect-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 80px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 100;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+        @keyframes musicPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
     </style>
 </head>
@@ -791,19 +780,26 @@
         </footer>
     </div>
     
-    <!-- 音效开关 -->
-    <div class="sound-toggle" id="soundToggle">
-        <button class="sound-btn" id="soundBtn">
-            <i class="fas fa-volume-up"></i>
+    <!-- 音乐播放器 -->
+    <div class="music-player" id="musicPlayer">
+        <button class="music-btn" id="playBtn">
+            <i class="fas fa-play"></i>
         </button>
-        <div class="sound-info" id="soundInfo">
-            <span class="status-indicator" id="statusIndicator"></span>
-            星空音效
+        <div class="music-info" id="musicInfo">
+            <span class="music-status" id="musicStatus"></span>
+            点击播放音乐
         </div>
     </div>
     
     <!-- 消息提示 -->
     <div class="message-toast" id="messageToast"></div>
+    
+    <!-- 音频元素 - 使用可靠的在线音乐源 -->
+    <audio id="backgroundMusic" preload="metadata" loop>
+        <!-- 使用可靠的在线音乐源 -->
+        <source src="https://assets.mixkit.co/music/preview/mixkit-clear-sky-479.mp3" type="audio/mpeg">
+        您的浏览器不支持音频元素。
+    </audio>
 
     <script>
         // 等待DOM加载完成
@@ -831,8 +827,8 @@
             // 3. 初始化卡片交互
             initCards();
             
-            // 4. 初始化音效开关
-            initSoundToggle();
+            // 4. 初始化音乐播放器 - 最简单的解决方案
+            initMusicPlayerSimple();
             
             // 5. 初始化验证系统
             initVerificationSystem();
@@ -892,9 +888,6 @@
                 // 创建粒子效果
                 createStarParticles(this.getBoundingClientRect());
                 
-                // 播放点击音效
-                playStarClickSound();
-                
                 // 显示消息
                 showMessage("星星为你闪烁 ✨");
             });
@@ -934,78 +927,78 @@
             });
         }
         
-        // 初始化音效开关
-        function initSoundToggle() {
-            const soundBtn = document.getElementById('soundBtn');
-            const soundInfo = document.getElementById('soundInfo');
-            const statusIndicator = document.getElementById('statusIndicator');
+        // 初始化音乐播放器 - 最简单的解决方案
+        function initMusicPlayerSimple() {
+            const music = document.getElementById('backgroundMusic');
+            const playBtn = document.getElementById('playBtn');
+            const musicInfo = document.getElementById('musicInfo');
+            const musicStatus = document.getElementById('musicStatus');
             
-            // 音效状态
-            let soundEnabled = true;
+            // 设置初始音量
+            music.volume = 0.3;
             
-            // 更新音效状态显示
-            function updateSoundStatus() {
-                if (soundEnabled) {
-                    soundBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-                    statusIndicator.className = 'status-indicator active';
-                    soundInfo.innerHTML = '<span class="status-indicator active"></span>星空音效';
+            // 记录音乐是否正在播放
+            let isPlaying = false;
+            
+            // 更新音乐状态显示
+            function updateMusicStatus(playing) {
+                isPlaying = playing;
+                if (playing) {
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    musicStatus.className = 'music-status playing';
+                    musicInfo.innerHTML = '<span class="music-status playing"></span>正在播放: 星空小夜曲';
                 } else {
-                    soundBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-                    statusIndicator.className = 'status-indicator';
-                    soundInfo.innerHTML = '<span class="status-indicator"></span>星空音效';
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    musicStatus.className = 'music-status';
+                    musicInfo.innerHTML = '<span class="music-status"></span>点击播放音乐';
                 }
             }
             
             // 初始化状态
-            updateSoundStatus();
+            updateMusicStatus(false);
             
-            // 音效按钮点击事件
-            soundBtn.addEventListener('click', function(e) {
+            // 播放/暂停按钮点击事件
+            playBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                e.preventDefault();
                 
-                soundEnabled = !soundEnabled;
-                updateSoundStatus();
-                
-                if (soundEnabled) {
-                    showMessage("星空音效已开启");
+                if (isPlaying) {
+                    // 暂停音乐
+                    music.pause();
+                    updateMusicStatus(false);
                 } else {
-                    showMessage("星空音效已关闭");
+                    // 播放音乐
+                    const playPromise = music.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            // 播放成功
+                            updateMusicStatus(true);
+                        }).catch(error => {
+                            // 播放失败
+                            console.log("音乐播放失败:", error);
+                            showMessage("请先点击页面任意位置，再播放音乐");
+                        });
+                    }
                 }
             });
-        }
-        
-        // 播放星星点击音效
-        function playStarClickSound() {
-            // 检查音效是否开启
-            const soundEnabled = document.getElementById('statusIndicator').classList.contains('active');
-            if (!soundEnabled) return;
             
-            // 创建简单的音效
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                // 配置振荡器
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // 高音
-                oscillator.frequency.exponentialRampToValueAtTime(440, audioContext.currentTime + 0.5); // 降调
-                
-                // 配置增益节点
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                
-                // 连接节点
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                // 开始播放
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.5);
-            } catch (error) {
-                console.log("音效播放失败:", error);
-            }
+            // 页面首次点击时解锁音频
+            let userInteracted = false;
+            
+            document.addEventListener('click', function() {
+                if (!userInteracted) {
+                    userInteracted = true;
+                    console.log("用户已与页面交互，可以播放音乐");
+                }
+            }, { once: true });
+            
+            // 音频加载失败处理
+            music.addEventListener('error', function() {
+                console.log("音频加载失败");
+                musicInfo.textContent = "音乐加载失败";
+                playBtn.style.opacity = '0.5';
+                showMessage("音乐加载失败，请检查网络连接");
+            });
         }
         
         // 初始化验证系统
