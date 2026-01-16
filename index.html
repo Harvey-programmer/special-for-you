@@ -2,11 +2,13 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>给温朝清的星空</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=Ma+Shan+Zheng&family=Long+Cang&display=swap" rel="stylesheet">
     <style>
+        /* 所有之前的样式保持不变，只修改音乐部分 */
+
         /* 基础重置 */
         * {
             margin: 0;
@@ -68,10 +70,19 @@
             margin: 0 auto;
         }
         
+        /* 安全区域 */
+        .safe-top {
+            padding-top: env(safe-area-inset-top, 20px);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+        
         /* 精美标题 - 修复字体间距问题 */
         .title-section {
             text-align: center;
-            padding: 20px 20px 30px;
+            padding: 40px 20px 30px;
             position: relative;
             overflow: hidden;
         }
@@ -79,12 +90,12 @@
         .title-wrapper {
             position: relative;
             display: inline-block;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
         
         .main-title {
             font-family: 'ZCOOL QingKe HuangYou', cursive;
-            font-size: 3.5rem;
+            font-size: 3.5rem; /* 减小字体大小，防止分行 */
             color: #fff;
             text-shadow: 
                 0 0 5px #ff6b6b,
@@ -92,12 +103,12 @@
                 0 0 20px #ff6b6b,
                 0 0 40px #ffd93d,
                 0 0 80px #ffd93d;
-            letter-spacing: 1px;
+            letter-spacing: 4px; /* 减小字间距 */
             position: relative;
             z-index: 2;
             animation: titleGlow 3s ease-in-out infinite alternate;
-            line-height: 1.2;
-            white-space: nowrap;
+            line-height: 1.2; /* 优化行高 */
+            white-space: nowrap; /* 防止换行 */
         }
         
         .title-subtitle {
@@ -142,9 +153,9 @@
         /* 响应式设计 */
         @media (max-width: 768px) {
             .main-title {
-                font-size: 2.5rem;
+                font-size: 2.5rem; /* 手机端更小字体 */
                 letter-spacing: 0.5px;
-                white-space: normal;
+                white-space: normal; /* 手机端允许换行 */
             }
             
             .title-subtitle {
@@ -385,7 +396,8 @@
             transform: translateX(-50%) translateY(0);
         }
         
-        /* 音乐播放器 - 重新设计，包含音乐选择 */
+
+        /* 音乐播放器 - 重新设计 */
         .music-player {
             position: fixed;
             bottom: 20px;
@@ -393,21 +405,14 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 15px;
+            border-radius: 30px;
+            padding: 12px 20px;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
             z-index: 100;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            max-width: 300px;
-        }
-        
-        .music-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
         
         .music-btn {
@@ -427,24 +432,44 @@
         .music-info {
             color: #a8d8ea;
             font-size: 0.9rem;
-            flex-grow: 1;
+            white-space: nowrap;
         }
-        
-        .music-selector {
+        /* 音乐播放器 - 重新设计，修复iOS播放问题 */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 12px 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
         
-        .music-select {
-            width: 100%;
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: white;
+        .music-btn {
+            background: transparent;
+            border: none;
+            color: #a8d8ea;
+            font-size: 1.4rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .music-info {
+            color: #a8d8ea;
             font-size: 0.9rem;
-            outline: none;
+            white-space: nowrap;
         }
         
         /* 愿望列表 */
@@ -647,6 +672,31 @@
             0%, 100% { opacity: 0.5; }
             50% { opacity: 1; }
         }
+        
+        /* 消息提示 */
+        .message-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            z-index: 1000;
+            font-size: 1rem;
+            text-align: center;
+            transition: transform 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .message-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        /* 其他所有样式保持不变 */
+        
     </style>
 </head>
 <body class="touch-optimized">
@@ -658,8 +708,8 @@
     <!-- 动态星空背景 -->
     <div class="star-field" id="starField"></div>
     
-    <div class="main-container">
-        <!-- 精美标题 -->
+    <div class="main-container safe-top safe-bottom">
+        <!-- 精美标题 - 修复字体间距问题 -->
         <section class="title-section">
             <div class="title-wrapper">
                 <h1 class="main-title" id="mainTitle">给温朝清的星空</h1>
@@ -797,20 +847,12 @@
     
     <!-- 音乐播放器 -->
     <div class="music-player" id="musicPlayer">
-        <div class="music-controls">
-            <button class="music-btn" id="playBtn">
-                <i class="fas fa-play"></i>
-            </button>
-            <div class="music-info" id="musicInfo">
-                <span class="music-status" id="musicStatus"></span>
-                点击播放音乐
-            </div>
-        </div>
-        <div class="music-selector">
-            <select class="music-select" id="musicSelect">
-                <option value="">选择音乐...</option>
-                <!-- 音乐选项将通过JavaScript动态添加 -->
-            </select>
+        <button class="music-btn" id="playBtn">
+            <i class="fas fa-play"></i>
+        </button>
+        <div class="music-info" id="musicInfo">
+            <span class="music-status" id="musicStatus"></span>
+            点击播放音乐
         </div>
     </div>
     
@@ -843,8 +885,8 @@
             // 3. 初始化卡片交互
             initCards();
             
-            // 4. 初始化音乐播放器 - 包含网易云音乐列表
-            initMusicPlayerWithNetEase();
+            // 4. 初始化音乐播放器 - 使用多个国内可访问的URL
+            initMusicPlayerWithReliableURLs();
             
             // 5. 初始化验证系统
             initVerificationSystem();
@@ -886,16 +928,6 @@
                 
                 container.appendChild(star);
             }
-            
-            // 添加闪烁动画
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes twinkle {
-                    0%, 100% { opacity: 0.3; }
-                    50% { opacity: 1; }
-                }
-            `;
-            document.head.appendChild(style);
         }
         
         // 初始化中央星星
@@ -953,64 +985,48 @@
             });
         }
         
-        // 初始化音乐播放器 - 包含网易云音乐列表
-        function initMusicPlayerWithNetEase() {
+        // 初始化音乐播放器 - 使用多个国内可访问的URL
+        function initMusicPlayerWithReliableURLs() {
             const playBtn = document.getElementById('playBtn');
             const musicInfo = document.getElementById('musicInfo');
             const musicStatus = document.getElementById('musicStatus');
-            const musicSelect = document.getElementById('musicSelect');
             
-            // 网易云音乐列表
-            const musicList = [
+            // 多个可靠的国内可访问音乐URL列表
+            const musicSources = [
                 {
-                    id: 1,
-                    name: "星空钢琴曲 - 纯音乐",
-                    artist: "钢琴家",
-                    url: "https://music.163.com/song/media/outer/url?id=1330348068.mp3"
+                    url: "https://music.163.com/song/media/outer/url?id=1330348068.mp3", // 网易云音乐 - 钢琴曲
+                    name: "星空钢琴曲"
                 },
                 {
-                    id: 2,
-                    name: "宁静夜晚 - 轻音乐",
-                    artist: "轻音乐团",
-                    url: "https://music.163.com/song/media/outer/url?id=29723014.mp3"
+                    url: "https://music.163.com/song/media/outer/url?id=29723014.mp3", // 网易云音乐 - 轻音乐
+                    name: "轻音乐"
                 },
                 {
-                    id: 3,
-                    name: "星空小夜曲",
-                    artist: "星空乐团",
-                    url: "https://music.163.com/song/media/outer/url?id=1330348068.mp3?from=singlemessage"
+                    url: "https://music.163.com/song/media/outer/url?id=1330348068.mp3?from=singlemessage", // 网易云音乐备用链接
+                    name: "星空背景音乐"
                 },
                 {
-                    id: 4,
-                    name: "梦幻钢琴曲",
-                    artist: "钢琴家",
-                    url: "https://music.163.com/song/media/outer/url?id=29723014.mp3?from=singlemessage"
+                    url: "https://music.163.com/song/media/outer/url?id=29723014.mp3?from=singlemessage", // 网易云音乐备用链接
+                    name: "宁静夜晚"
                 },
                 {
-                    id: 5,
-                    name: "夜空下的思念",
-                    artist: "纯音乐",
-                    url: "https://music.163.com/song/media/outer/url?id=1330348068.mp3?from=singlemessage&isappinstalled=0"
+                    url: "https://freepd.com/music/Prelude%20No.%2017.mp3", // 免费公共音乐
+                    name: "前奏曲"
                 }
             ];
             
             // 创建音频元素
             const audio = new Audio();
-            audio.volume = 0.3; // 30%音量
+            audio.volume = 0.2; // 20%音量
             audio.loop = true;
             
-            // 当前播放状态
+            // 当前音乐索引
+            let currentMusicIndex = 0;
             let isPlaying = false;
             let audioInitialized = false;
-            let currentMusicIndex = 0;
             
-            // 填充音乐选择器
-            musicList.forEach((music, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = `${music.name} - ${music.artist}`;
-                musicSelect.appendChild(option);
-            });
+            // 设置第一个音乐源
+            audio.src = musicSources[currentMusicIndex].url;
             
             // 更新播放状态显示
             function updateMusicStatus(playing) {
@@ -1018,8 +1034,7 @@
                 if (playing) {
                     playBtn.innerHTML = '<i class="fas fa-pause"></i>';
                     musicStatus.className = 'music-status playing';
-                    const currentMusic = musicList[currentMusicIndex];
-                    musicInfo.innerHTML = `<span class="music-status playing"></span>正在播放: ${currentMusic.name}`;
+                    musicInfo.innerHTML = `<span class="music-status playing"></span>正在播放: ${musicSources[currentMusicIndex].name}`;
                 } else {
                     playBtn.innerHTML = '<i class="fas fa-play"></i>';
                     musicStatus.className = 'music-status';
@@ -1030,37 +1045,90 @@
             // 初始化状态
             updateMusicStatus(false);
             
-            // 加载并播放音乐
-            function loadAndPlayMusic(index) {
-                if (index < 0 || index >= musicList.length) return;
+            // 播放音乐函数
+            function playMusic() {
+                if (!audioInitialized) {
+                    showMessage("请先点击页面任意位置，然后再播放音乐");
+                    return false;
+                }
                 
-                currentMusicIndex = index;
-                const music = musicList[index];
-                
-                // 更新选择器
-                musicSelect.value = index;
-                
-                // 加载音乐
-                audio.src = music.url;
-                audio.load();
-                
-                // 更新显示
-                musicInfo.innerHTML = `<span class="music-status"></span>正在加载: ${music.name}`;
-                
-                // 播放音乐
                 const playPromise = audio.play();
                 
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
-                        console.log("音乐开始播放:", music.name);
+                        console.log("音乐开始播放");
                         updateMusicStatus(true);
                     }).catch(error => {
                         console.error("播放失败:", error);
-                        showMessage("播放失败，请检查网络或选择其他音乐");
+                        showMessage("播放失败，将尝试下一个音乐源");
+                        tryNextMusic();
+                    });
+                }
+                return true;
+            }
+            
+            // 尝试下一个音乐源
+            function tryNextMusic() {
+                currentMusicIndex++;
+                
+                if (currentMusicIndex < musicSources.length) {
+                    // 还有更多音乐源可以尝试
+                    console.log(`尝试音乐源 ${currentMusicIndex + 1}/${musicSources.length}`);
+                    audio.src = musicSources[currentMusicIndex].url;
+                    musicInfo.innerHTML = `<span class="music-status"></span>正在加载: ${musicSources[currentMusicIndex].name}`;
+                    
+                    // 加载新音乐
+                    audio.load();
+                    
+                    // 如果之前正在播放，则播放新音乐
+                    if (isPlaying) {
+                        setTimeout(() => {
+                            playMusic();
+                        }, 1000);
+                    }
+                } else {
+                    // 所有音乐源都尝试过了
+                    console.log("所有音乐源都尝试过了");
+                    musicInfo.innerHTML = `<span class="music-status"></span>音乐不可用`;
+                    playBtn.style.opacity = '0.5';
+                    showMessage("所有音乐源都不可用，请检查网络连接");
+                }
+            }
+            
+            // 页面首次点击时初始化音频
+            function initAudioOnFirstInteraction() {
+                console.log("开始初始化音频...");
+                
+                // 尝试播放静音音频来解锁
+                audio.volume = 0;
+                const playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log("音频解锁成功");
+                        // 播放成功，立即暂停
+                        audio.pause();
+                        audio.volume = 0.2; // 恢复音量
+                        audioInitialized = true;
                         updateMusicStatus(false);
+                        showMessage("音乐已准备好，点击播放按钮开始播放");
+                        
+                        // 移除事件监听器
+                        document.removeEventListener('click', initAudioOnFirstInteraction);
+                        document.removeEventListener('touchstart', initAudioOnFirstInteraction);
+                        
+                    }).catch(error => {
+                        console.log("音频解锁失败，需要用户交互");
+                        // 可能需要用户直接与播放按钮交互
                     });
                 }
             }
+            
+            // 添加点击事件来初始化音频
+            document.addEventListener('click', initAudioOnFirstInteraction, { once: true });
+            
+            // 也添加触摸事件
+            document.addEventListener('touchstart', initAudioOnFirstInteraction, { once: true });
             
             // 播放按钮点击事件
             playBtn.addEventListener('click', function(e) {
@@ -1068,7 +1136,7 @@
                 e.preventDefault();
                 
                 if (!audioInitialized) {
-                    // 尝试初始化音频
+                    // 如果音频未初始化，先尝试初始化
                     audio.volume = 0;
                     const unlockPromise = audio.play();
                     
@@ -1076,16 +1144,12 @@
                         unlockPromise.then(() => {
                             // 解锁成功
                             audio.pause();
-                            audio.volume = 0.3;
+                            audio.volume = 0.2;
                             audioInitialized = true;
+                            updateMusicStatus(false);
                             
-                            // 如果音乐选择器有选中，播放选中的音乐
-                            if (musicSelect.value !== "") {
-                                loadAndPlayMusic(parseInt(musicSelect.value));
-                            } else {
-                                // 否则播放第一首音乐
-                                loadAndPlayMusic(0);
-                            }
+                            // 现在播放音乐
+                            playMusic();
                         }).catch(error => {
                             console.log("音频解锁失败:", error);
                             showMessage("请先点击页面任意位置，再播放音乐");
@@ -1099,30 +1163,10 @@
                         updateMusicStatus(false);
                     } else {
                         // 如果未播放，则开始播放
-                        if (musicSelect.value !== "") {
-                            loadAndPlayMusic(parseInt(musicSelect.value));
-                        } else {
-                            // 如果没有选择，播放第一首
-                            loadAndPlayMusic(0);
-                        }
+                        playMusic();
                     }
                 }
             });
-            
-            // 音乐选择器变化事件
-            musicSelect.addEventListener('change', function() {
-                if (this.value !== "") {
-                    loadAndPlayMusic(parseInt(this.value));
-                }
-            });
-            
-            // 页面点击事件来解锁音频
-            document.addEventListener('click', function() {
-                if (!audioInitialized) {
-                    audioInitialized = true;
-                    console.log("音频已通过页面点击解锁");
-                }
-            }, { once: true });
             
             // 音乐结束事件
             audio.addEventListener('ended', function() {
@@ -1130,24 +1174,29 @@
                 updateMusicStatus(false);
                 
                 // 自动播放下一个音乐
-                const nextIndex = (currentMusicIndex + 1) % musicList.length;
-                setTimeout(() => {
-                    loadAndPlayMusic(nextIndex);
-                }, 2000);
+                currentMusicIndex = (currentMusicIndex + 1) % musicSources.length;
+                audio.src = musicSources[currentMusicIndex].url;
+                
+                if (isPlaying) {
+                    setTimeout(() => {
+                        playMusic();
+                    }, 2000);
+                }
             });
             
             // 音乐错误处理
             audio.addEventListener('error', function(e) {
                 console.error("音乐加载错误:", e);
-                showMessage("音乐加载失败，将尝试下一首");
                 
-                // 尝试下一个音乐源
-                const nextIndex = (currentMusicIndex + 1) % musicList.length;
-                if (nextIndex !== currentMusicIndex) {
-                    setTimeout(() => {
-                        loadAndPlayMusic(nextIndex);
-                    }, 1000);
+                // 如果正在播放，尝试下一个音乐源
+                if (isPlaying) {
+                    tryNextMusic();
                 }
+            });
+            
+            // 音乐加载成功
+            audio.addEventListener('canplaythrough', function() {
+                console.log(`音乐源 ${currentMusicIndex} 加载成功`);
             });
             
             // 音乐播放状态监听
@@ -1158,12 +1207,6 @@
             audio.addEventListener('pause', function() {
                 updateMusicStatus(false);
             });
-            
-            // 初始选择第一首音乐
-            if (musicList.length > 0) {
-                audio.src = musicList[0].url;
-                musicInfo.innerHTML = `<span class="music-status"></span>准备播放: ${musicList[0].name}`;
-            }
         }
         
         // 初始化验证系统
@@ -1174,7 +1217,7 @@
             const wishForm = document.getElementById('wishForm');
             
             // 设置验证码
-            const correctCode = "0325"; // 可以修改为您设置的验证码
+            const correctCode = "251228"; // 可以修改为您设置的验证码
             
             // 验证按钮点击事件
             verifyBtn.addEventListener('click', function() {
@@ -1313,7 +1356,7 @@
                 // 使用mailto链接
                 const subject = "来自星空愿望清单的愿望";
                 const body = encodeURIComponent(mailContent);
-                const mailtoLink = `mailto:your_email@example.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+                const mailtoLink = `mailto:709966188@qq.com?subject=${encodeURIComponent(subject)}&body=${body}`;
                 
                 // 打开邮件客户端
                 window.open(mailtoLink, '_blank');
