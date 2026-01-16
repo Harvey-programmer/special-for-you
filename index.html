@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>给温朝清的星空</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&family=Liu+Jian+Mao+Cao&family=Long+Cang&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=Ma+Shan+Zheng&family=Long+Cang&display=swap" rel="stylesheet">
     <style>
         /* 基础重置 */
         * {
@@ -29,7 +29,7 @@
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
-            font-family: 'ZCOOL XiaoWei', 'Ma Shan Zheng', serif;
+            font-family: 'Ma Shan Zheng', serif;
         }
         
         /* 动态星空背景 */
@@ -77,7 +77,7 @@
             padding-bottom: env(safe-area-inset-bottom, 20px);
         }
         
-        /* 精美标题 */
+        /* 精美标题 - 使用ZCOOL QingKe HuangYou字体 */
         .title-section {
             text-align: center;
             padding: 40px 20px 30px;
@@ -92,8 +92,8 @@
         }
         
         .main-title {
-            font-family: 'Liu Jian Mao Cao', cursive;
-            font-size: 4.5rem;
+            font-family: 'ZCOOL QingKe HuangYou', cursive;
+            font-size: 4.2rem;
             color: #fff;
             text-shadow: 
                 0 0 5px #ff6b6b,
@@ -521,6 +521,107 @@
                 height: 100px;
             }
         }
+        
+        /* 新功能：星空记忆相册 */
+        .photo-album {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .photo-item {
+            width: 100%;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .photo-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .photo-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            color: #a8d8ea;
+            font-size: 2rem;
+        }
+        
+        /* 数据管理面板 */
+        .data-management {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .data-info {
+            color: #a8d8ea;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        /* 数据导出导入 */
+        .data-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .data-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .data-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        /* 愿望统计 */
+        .wish-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.8rem;
+            color: #ffd93d;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #a8d8ea;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body class="touch-optimized">
@@ -533,7 +634,7 @@
     <div class="star-field" id="starField"></div>
     
     <div class="main-container safe-top safe-bottom">
-        <!-- 精美标题 -->
+        <!-- 精美标题 - 使用ZCOOL QingKe HuangYou字体 -->
         <section class="title-section">
             <div class="title-wrapper">
                 <h1 class="main-title" id="mainTitle">
@@ -584,27 +685,57 @@
                             <button class="btn btn-primary" id="saveWishBtn">保存愿望</button>
                             <button class="btn btn-secondary" id="sendWishBtn">发送到我的邮箱</button>
                         </div>
+                        
+                        <!-- 愿望统计 -->
+                        <div class="wish-stats" id="wishStats">
+                            <div class="stat-item">
+                                <div class="stat-number" id="totalWishes">0</div>
+                                <div class="stat-label">愿望总数</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="todayWishes">0</div>
+                                <div class="stat-label">今日新增</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 愿望列表 -->
                         <div class="wish-list" id="wishList"></div>
+                        
+                        <!-- 数据管理 -->
+                        <div class="data-management">
+                            <p class="data-info">💡 愿望数据保存在您的手机浏览器本地存储中。如果您更换设备或清除浏览器数据，愿望将会丢失。建议定期备份。</p>
+                            <div class="data-actions">
+                                <button class="data-btn" id="exportWishesBtn">导出愿望</button>
+                                <button class="data-btn" id="importWishesBtn">导入愿望</button>
+                                <button class="data-btn" id="clearWishesBtn">清空愿望</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- 卡片2: 星空信纸 -->
+            <!-- 卡片2: 星空记忆相册（替代原来的星空信纸） -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">
-                        <i class="fas fa-feather-alt"></i>
+                        <i class="fas fa-images"></i>
                     </div>
-                    <h3 class="card-title">星空信纸</h3>
+                    <h3 class="card-title">星空记忆相册</h3>
                 </div>
                 <div class="card-content">
-                    <p>写下你想说的话，它会像星光一样永远留在这片夜空。</p>
+                    <p>上传美好的回忆照片，保存在这片星空中。照片只保存在您的手机本地。</p>
                     <div style="margin-top: 20px;">
-                        <textarea class="input-field textarea-field" id="letterText" placeholder="给温朝清的话..." maxlength="1000"></textarea>
-                        <div class="btn-group">
-                            <button class="btn btn-primary" id="saveLetterBtn">保存</button>
-                            <button class="btn btn-secondary" id="clearLetterBtn">清空</button>
+                        <div class="photo-album" id="photoAlbum">
+                            <!-- 照片将由JavaScript动态添加 -->
+                            <div class="photo-item" id="addPhotoBtn">
+                                <div class="photo-placeholder">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                            </div>
                         </div>
+                        <p style="color: #a8d8ea; font-size: 0.9rem; margin-top: 15px; text-align: center;">
+                            照片仅保存在您的手机本地，不会上传到服务器
+                        </p>
                     </div>
                 </div>
             </div>
@@ -636,6 +767,9 @@
         
         <footer>
             <p>这片星空永远为你保留 ✨</p>
+            <p style="margin-top: 10px; font-size: 0.8rem; color: #a8d8ea;">
+                数据保存说明：愿望和照片保存在您的手机浏览器本地，不会上传到服务器
+            </p>
         </footer>
     </div>
     
@@ -655,6 +789,9 @@
         <source src="https://assets.mixkit.co/music/preview/mixkit-stars-1189.mp3" type="audio/mpeg">
         您的浏览器不支持音频元素。
     </audio>
+    
+    <!-- 隐藏的文件输入框用于照片上传 -->
+    <input type="file" id="photoUploadInput" accept="image/*" style="display: none;" multiple>
 
     <script>
         // 等待DOM加载完成
@@ -690,6 +827,9 @@
             
             // 6. 开始流星雨
             startMeteorShower();
+            
+            // 7. 初始化相册功能
+            initPhotoAlbum();
             
             console.log("应用初始化完成");
         }
@@ -766,7 +906,8 @@
                     // 防止事件冒泡
                     if (e.target.tagName === 'BUTTON' || 
                         e.target.tagName === 'TEXTAREA' || 
-                        e.target.tagName === 'INPUT') {
+                        e.target.tagName === 'INPUT' ||
+                        e.target.closest('.photo-item')) {
                         return;
                     }
                     
@@ -776,36 +917,6 @@
                         this.style.transform = 'translateY(-10px)';
                     }, 200);
                 });
-            });
-            
-            // 初始化星空信纸功能
-            const saveLetterBtn = document.getElementById('saveLetterBtn');
-            const clearLetterBtn = document.getElementById('clearLetterBtn');
-            const letterText = document.getElementById('letterText');
-            
-            // 加载已保存的信件
-            const savedLetter = localStorage.getItem('starLetter');
-            if (savedLetter) {
-                letterText.value = savedLetter;
-            }
-            
-            saveLetterBtn.addEventListener('click', function() {
-                const letter = letterText.value.trim();
-                
-                if (letter) {
-                    localStorage.setItem('starLetter', letter);
-                    showMessage("信件已保存到星空中 ✨");
-                } else {
-                    showMessage("请先写下一些内容");
-                }
-            });
-            
-            clearLetterBtn.addEventListener('click', function() {
-                if (letterText.value.trim() && confirm("确定要清空信件吗？")) {
-                    letterText.value = '';
-                    localStorage.removeItem('starLetter');
-                    showMessage("信件已清空");
-                }
             });
         }
         
@@ -906,6 +1017,31 @@
             const wishInput = document.getElementById('wishInput');
             const wishName = document.getElementById('wishName');
             const wishList = document.getElementById('wishList');
+            const exportWishesBtn = document.getElementById('exportWishesBtn');
+            const importWishesBtn = document.getElementById('importWishesBtn');
+            const clearWishesBtn = document.getElementById('clearWishesBtn');
+            
+            // 获取今天的日期字符串
+            function getTodayDateString() {
+                const today = new Date();
+                return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            }
+            
+            // 更新愿望统计
+            function updateWishStats() {
+                const wishes = JSON.parse(localStorage.getItem('starWishes') || '[]');
+                const today = getTodayDateString();
+                
+                // 计算今日愿望数量
+                const todayWishes = wishes.filter(wish => {
+                    const wishDate = wish.timestamp.split(' ')[0];
+                    return wishDate === today;
+                }).length;
+                
+                // 更新显示
+                document.getElementById('totalWishes').textContent = wishes.length;
+                document.getElementById('todayWishes').textContent = todayWishes;
+            }
             
             // 保存愿望
             saveWishBtn.addEventListener('click', function() {
@@ -934,6 +1070,9 @@
                 // 更新愿望列表显示
                 updateWishListDisplay();
                 
+                // 更新统计
+                updateWishStats();
+                
                 // 清空输入框
                 wishInput.value = '';
                 wishName.value = '';
@@ -957,11 +1096,6 @@
                 // 显示发送中提示
                 showMessage("正在准备发送愿望...");
                 
-                // 由于我们没有后端服务器，这里提供一个替代方案
-                // 方案1: 使用mailto链接（简单但需要用户手动发送）
-                // 方案2: 使用Formspree或类似的表单服务
-                // 这里我们使用mailto作为示例
-                
                 // 构建邮件内容
                 let mailContent = "来自星空愿望清单的愿望：\n\n";
                 
@@ -980,16 +1114,101 @@
                 window.open(mailtoLink, '_blank');
                 
                 showMessage("已打开邮件客户端，请点击发送");
+            });
+            
+            // 导出愿望
+            exportWishesBtn.addEventListener('click', function() {
+                const wishes = JSON.parse(localStorage.getItem('starWishes') || '[]');
                 
-                // 注意：这里需要您将"your_email@example.com"替换为您的真实邮箱
-                // 但注意：邮箱会暴露在页面中
+                if (wishes.length === 0) {
+                    showMessage("没有愿望可以导出");
+                    return;
+                }
                 
-                // 如果您不希望邮箱暴露，可以考虑以下方案：
-                // 1. 使用表单服务如Formspree
-                // 2. 使用Google Forms
-                // 3. 使用后端API
+                // 创建导出的数据
+                const exportData = {
+                    type: "星空愿望清单导出",
+                    version: "1.0",
+                    exportDate: new Date().toLocaleString('zh-CN'),
+                    wishes: wishes
+                };
                 
-                // 由于我们没有后端，这里提供最简单的解决方案
+                // 创建JSON文件
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                // 创建下载链接
+                const exportFileDefaultName = '星空愿望清单备份.json';
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                showMessage("愿望已导出为JSON文件");
+            });
+            
+            // 导入愿望
+            importWishesBtn.addEventListener('click', function() {
+                // 创建文件输入框
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = '.json';
+                
+                fileInput.onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const importData = JSON.parse(e.target.result);
+                            
+                            // 验证导入数据格式
+                            if (!importData.wishes || !Array.isArray(importData.wishes)) {
+                                showMessage("导入失败：文件格式不正确");
+                                return;
+                            }
+                            
+                            // 合并愿望（避免重复）
+                            const existingWishes = JSON.parse(localStorage.getItem('starWishes') || '[]');
+                            const existingIds = new Set(existingWishes.map(wish => wish.id));
+                            
+                            // 过滤掉已存在的愿望
+                            const newWishes = importData.wishes.filter(wish => !existingIds.has(wish.id));
+                            
+                            if (newWishes.length === 0) {
+                                showMessage("没有新的愿望可以导入");
+                                return;
+                            }
+                            
+                            // 合并愿望
+                            const mergedWishes = [...existingWishes, ...newWishes];
+                            localStorage.setItem('starWishes', JSON.stringify(mergedWishes));
+                            
+                            // 更新显示
+                            updateWishListDisplay();
+                            updateWishStats();
+                            
+                            showMessage(`成功导入 ${newWishes.length} 个愿望`);
+                        } catch (error) {
+                            console.error("导入失败:", error);
+                            showMessage("导入失败：文件格式不正确");
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                
+                fileInput.click();
+            });
+            
+            // 清空愿望
+            clearWishesBtn.addEventListener('click', function() {
+                if (confirm("确定要清空所有愿望吗？此操作不可撤销。")) {
+                    localStorage.removeItem('starWishes');
+                    updateWishListDisplay();
+                    updateWishStats();
+                    showMessage("所有愿望已清空");
+                }
             });
             
             // 初始化愿望列表显示
@@ -1002,7 +1221,9 @@
                 }
                 
                 wishList.innerHTML = '';
-                wishes.forEach(wish => {
+                
+                // 按时间倒序排列
+                wishes.sort((a, b) => b.id - a.id).forEach(wish => {
                     const wishItem = document.createElement('div');
                     wishItem.className = 'wish-item';
                     wishItem.innerHTML = `
@@ -1018,6 +1239,115 @@
             
             // 初始加载愿望列表
             updateWishListDisplay();
+            updateWishStats();
+        }
+        
+        // 初始化相册功能
+        function initPhotoAlbum() {
+            const addPhotoBtn = document.getElementById('addPhotoBtn');
+            const photoAlbum = document.getElementById('photoAlbum');
+            const photoUploadInput = document.getElementById('photoUploadInput');
+            
+            // 加载已保存的照片
+            function loadSavedPhotos() {
+                const savedPhotos = JSON.parse(localStorage.getItem('starPhotos') || '[]');
+                
+                // 清空相册（保留添加按钮）
+                photoAlbum.innerHTML = '';
+                
+                // 添加已保存的照片
+                savedPhotos.forEach((photoData, index) => {
+                    addPhotoToAlbum(photoData, index);
+                });
+                
+                // 添加添加按钮
+                photoAlbum.appendChild(addPhotoBtn);
+            }
+            
+            // 添加照片到相册
+            function addPhotoToAlbum(photoData, index) {
+                const photoItem = document.createElement('div');
+                photoItem.className = 'photo-item';
+                
+                const img = document.createElement('img');
+                img.src = photoData.dataUrl;
+                img.alt = `星空记忆 ${index + 1}`;
+                
+                // 添加点击删除功能
+                img.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (confirm("确定要删除这张照片吗？")) {
+                        deletePhoto(index);
+                    }
+                });
+                
+                photoItem.appendChild(img);
+                photoAlbum.insertBefore(photoItem, addPhotoBtn);
+            }
+            
+            // 删除照片
+            function deletePhoto(index) {
+                const savedPhotos = JSON.parse(localStorage.getItem('starPhotos') || '[]');
+                savedPhotos.splice(index, 1);
+                localStorage.setItem('starPhotos', JSON.stringify(savedPhotos));
+                loadSavedPhotos();
+                showMessage("照片已删除");
+            }
+            
+            // 添加照片按钮点击事件
+            addPhotoBtn.addEventListener('click', function() {
+                photoUploadInput.click();
+            });
+            
+            // 文件上传处理
+            photoUploadInput.addEventListener('change', function(e) {
+                const files = e.target.files;
+                if (!files.length) return;
+                
+                // 获取已保存的照片
+                let savedPhotos = JSON.parse(localStorage.getItem('starPhotos') || '[]');
+                
+                // 限制最多保存9张照片
+                if (savedPhotos.length + files.length > 9) {
+                    showMessage("最多只能保存9张照片");
+                    return;
+                }
+                
+                // 处理每个文件
+                Array.from(files).forEach((file, fileIndex) => {
+                    if (!file.type.startsWith('image/')) {
+                        showMessage(`文件 ${file.name} 不是图片文件`);
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // 将图片数据保存到本地存储
+                        savedPhotos.push({
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            dataUrl: e.target.result,
+                            uploadTime: new Date().toLocaleString('zh-CN')
+                        });
+                        
+                        localStorage.setItem('starPhotos', JSON.stringify(savedPhotos));
+                        
+                        // 如果是最后一个文件，重新加载相册
+                        if (fileIndex === files.length - 1) {
+                            loadSavedPhotos();
+                            showMessage(`成功添加 ${files.length} 张照片`);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
+                
+                // 清空文件输入框，以便可以再次选择相同的文件
+                photoUploadInput.value = '';
+            });
+            
+            // 初始加载照片
+            loadSavedPhotos();
         }
         
         // 创建愿望星星
