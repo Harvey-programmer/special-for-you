@@ -793,13 +793,6 @@
     
     <!-- 消息提示 -->
     <div class="message-toast" id="messageToast"></div>
-    
-    <!-- 音频元素 - 使用可靠的在线音乐源 -->
-    <audio id="backgroundMusic" preload="metadata" loop>
-        <!-- 使用可靠的在线音乐源 -->
-        <source src="https://assets.mixkit.co/music/preview/mixkit-clear-sky-479.mp3" type="audio/mpeg">
-        您的浏览器不支持音频元素。
-    </audio>
 
     <script>
         // 等待DOM加载完成
@@ -827,8 +820,8 @@
             // 3. 初始化卡片交互
             initCards();
             
-            // 4. 初始化音乐播放器 - 最简单的解决方案
-            initMusicPlayerSimple();
+            // 4. 初始化音乐播放器 - 使用多个可靠URL
+            initMusicPlayerWithMultipleSources();
             
             // 5. 初始化验证系统
             initVerificationSystem();
@@ -927,18 +920,49 @@
             });
         }
         
-        // 初始化音乐播放器 - 最简单的解决方案
-        function initMusicPlayerSimple() {
-            const music = document.getElementById('backgroundMusic');
+        // 初始化音乐播放器 - 使用多个可靠URL
+        function initMusicPlayerWithMultipleSources() {
             const playBtn = document.getElementById('playBtn');
             const musicInfo = document.getElementById('musicInfo');
             const musicStatus = document.getElementById('musicStatus');
             
-            // 设置初始音量
+            // 多个可靠音乐URL列表
+            const musicSources = [
+                {
+                    url: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_8a5a6f2c4c.mp3",
+                    name: "宁静夜晚"
+                },
+                {
+                    url: "https://cdn.pixabay.com/download/audio/2022/03/19/audio_8a5a6f2c4c.mp3",
+                    name: "星空小夜曲"
+                },
+                {
+                    url: "https://cdn.pixabay.com/download/audio/2022/10/13/audio_c5c5c5c5c5.mp3",
+                    name: "梦幻钢琴"
+                },
+                {
+                    url: "https://cdn.pixabay.com/download/audio/2022/12/19/audio_2b2b2b2b2b.mp3",
+                    name: "轻柔旋律"
+                },
+                {
+                    url: "https://cdn.pixabay.com/download/audio/2023/01/15/audio_4d4d4d4d4d.mp3",
+                    name: "星空背景"
+                }
+            ];
+            
+            // 当前正在尝试的音乐索引
+            let currentMusicIndex = 0;
+            
+            // 创建音频元素
+            const music = new Audio();
             music.volume = 0.3;
+            music.loop = true;
             
             // 记录音乐是否正在播放
             let isPlaying = false;
+            
+            // 记录音频是否已解锁
+            let audioUnlocked = false;
             
             // 更新音乐状态显示
             function updateMusicStatus(playing) {
@@ -946,59 +970,132 @@
                 if (playing) {
                     playBtn.innerHTML = '<i class="fas fa-pause"></i>';
                     musicStatus.className = 'music-status playing';
-                    musicInfo.innerHTML = '<span class="music-status playing"></span>正在播放: 星空小夜曲';
+                    musicInfo.innerHTML = `<span class="music-status playing"></span>正在播放: ${musicSources[currentMusicIndex].name}`;
                 } else {
                     playBtn.innerHTML = '<i class="fas fa-play"></i>';
                     musicStatus.className = 'music-status';
-                    musicInfo.innerHTML = '<span class="music-status"></span>点击播放音乐';
+                    musicInfo.innerHTML = `<span class="music-status"></span>点击播放音乐`;
                 }
             }
             
             // 初始化状态
             updateMusicStatus(false);
             
+            // 尝试播放当前音乐
+            function tryPlayCurrentMusic() {
+                if (!audioUnlocked) {
+                    showMessage("请先点击页面任意位置，再播放音乐");
+                    return;
+                }
+                
+                const musicSource = musicSources[currentMusicIndex];
+                music.src = musicSource.url;
+                music.load();
+                
+                const playPromise = music.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // 播放成功
+                        updateMusicStatus(true);
+                    }).catch(error => {
+                        // 播放失败，尝试下一个音乐源
+                        console.log(`音乐源 ${currentMusicIndex} 播放失败:`, error);
+                        tryNextMusic();
+                    });
+                }
+            }
+            
+            // 尝试下一个音乐源
+            function tryNextMusic() {
+                currentMusicIndex++;
+                
+                if (currentMusicIndex < musicSources.length) {
+                    // 还有更多音乐源可以尝试
+                    showMessage(`正在尝试下一个音乐源... (${currentMusicIndex + 1}/${musicSources.length})`);
+                    tryPlayCurrentMusic();
+                } else {
+                    // 所有音乐源都尝试过了
+                    showMessage("所有音乐源都不可用，请检查网络连接");
+                    musicInfo.innerHTML = `<span class="music-status"></span>音乐不可用`;
+                    playBtn.style.opacity = '0.5';
+                }
+            }
+            
             // 播放/暂停按钮点击事件
             playBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 
-                if (isPlaying) {
-                    // 暂停音乐
-                    music.pause();
-                    updateMusicStatus(false);
-                } else {
-                    // 播放音乐
-                    const playPromise = music.play();
+                if (!audioUnlocked) {
+                    // 尝试解锁音频
+                    music.volume = 0;
+                    const unlockPromise = music.play();
                     
-                    if (playPromise !== undefined) {
-                        playPromise.then(() => {
-                            // 播放成功
-                            updateMusicStatus(true);
+                    if (unlockPromise !== undefined) {
+                        unlockPromise.then(() => {
+                            // 解锁成功
+                            audioUnlocked = true;
+                            music.pause();
+                            music.volume = 0.3;
+                            
+                            // 现在尝试播放音乐
+                            if (isPlaying) {
+                                music.pause();
+                                updateMusicStatus(false);
+                            } else {
+                                tryPlayCurrentMusic();
+                            }
                         }).catch(error => {
-                            // 播放失败
-                            console.log("音乐播放失败:", error);
+                            // 解锁失败
+                            console.log("音频解锁失败:", error);
                             showMessage("请先点击页面任意位置，再播放音乐");
                         });
+                    }
+                } else {
+                    // 音频已解锁
+                    if (isPlaying) {
+                        music.pause();
+                        updateMusicStatus(false);
+                    } else {
+                        tryPlayCurrentMusic();
                     }
                 }
             });
             
             // 页面首次点击时解锁音频
-            let userInteracted = false;
-            
             document.addEventListener('click', function() {
-                if (!userInteracted) {
-                    userInteracted = true;
-                    console.log("用户已与页面交互，可以播放音乐");
+                if (!audioUnlocked) {
+                    // 尝试解锁音频
+                    music.volume = 0;
+                    const unlockPromise = music.play();
+                    
+                    if (unlockPromise !== undefined) {
+                        unlockPromise.then(() => {
+                            // 解锁成功
+                            audioUnlocked = true;
+                            music.pause();
+                            music.volume = 0.3;
+                            console.log("音频解锁成功");
+                        }).catch(error => {
+                            console.log("音频解锁失败:", error);
+                        });
+                    }
                 }
             }, { once: true });
             
             // 音频加载失败处理
             music.addEventListener('error', function() {
-                console.log("音频加载失败");
-                musicInfo.textContent = "音乐加载失败";
-                playBtn.style.opacity = '0.5';
-                showMessage("音乐加载失败，请检查网络连接");
+                console.log(`音乐源 ${currentMusicIndex} 加载失败`);
+                
+                // 如果正在播放，尝试下一个音乐源
+                if (isPlaying) {
+                    tryNextMusic();
+                }
             });
+            
+            // 初始化第一个音乐源
+            music.src = musicSources[0].url;
+            music.load();
         }
         
         // 初始化验证系统
