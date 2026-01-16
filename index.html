@@ -820,8 +820,8 @@
             // 3. 初始化卡片交互
             initCards();
             
-            // 4. 初始化音乐播放器 - 使用多个可靠URL
-            initMusicPlayerWithMultipleSources();
+            // 4. 初始化音乐播放器 - 修复iOS播放问题
+            initFixedMusicPlayer();
             
             // 5. 初始化验证系统
             initVerificationSystem();
@@ -920,182 +920,164 @@
             });
         }
         
-        // 初始化音乐播放器 - 使用多个可靠URL
-        function initMusicPlayerWithMultipleSources() {
+        // 修复的音乐播放器 - 简化版本
+        function initFixedMusicPlayer() {
             const playBtn = document.getElementById('playBtn');
             const musicInfo = document.getElementById('musicInfo');
             const musicStatus = document.getElementById('musicStatus');
             
-            // 多个可靠音乐URL列表
+            // 音乐源列表
             const musicSources = [
-                {
-                    url: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_8a5a6f2c4c.mp3",
-                    name: "宁静夜晚"
-                },
-                {
-                    url: "https://cdn.pixabay.com/download/audio/2022/03/19/audio_8a5a6f2c4c.mp3",
-                    name: "星空小夜曲"
-                },
-                {
-                    url: "https://cdn.pixabay.com/download/audio/2022/10/13/audio_c5c5c5c5c5.mp3",
-                    name: "梦幻钢琴"
-                },
-                {
-                    url: "https://cdn.pixabay.com/download/audio/2022/12/19/audio_2b2b2b2b2b.mp3",
-                    name: "轻柔旋律"
-                },
-                {
-                    url: "https://cdn.pixabay.com/download/audio/2023/01/15/audio_4d4d4d4d4d.mp3",
-                    name: "星空背景"
-                }
+                "https://assets.mixkit.co/music/preview/mixkit-clear-sky-479.mp3",
+                "https://assets.mixkit.co/music/preview/mixkit-deep-urban-623.mp3",
+                "https://assets.mixkit.co/music/preview/mixkit-ambient-piano-582.mp3"
             ];
             
-            // 当前正在尝试的音乐索引
-            let currentMusicIndex = 0;
-            
             // 创建音频元素
-            const music = new Audio();
-            music.volume = 0.3;
-            music.loop = true;
+            const audio = new Audio();
+            audio.volume = 0.3; // 30%音量
+            audio.loop = true;
             
-            // 记录音乐是否正在播放
+            // 当前音乐索引
+            let currentMusicIndex = 0;
             let isPlaying = false;
+            let audioInitialized = false;
             
-            // 记录音频是否已解锁
-            let audioUnlocked = false;
+            // 设置第一个音乐源
+            audio.src = musicSources[currentMusicIndex];
             
-            // 更新音乐状态显示
+            // 更新播放状态显示
             function updateMusicStatus(playing) {
                 isPlaying = playing;
                 if (playing) {
                     playBtn.innerHTML = '<i class="fas fa-pause"></i>';
                     musicStatus.className = 'music-status playing';
-                    musicInfo.innerHTML = `<span class="music-status playing"></span>正在播放: ${musicSources[currentMusicIndex].name}`;
+                    musicInfo.textContent = "正在播放";
                 } else {
                     playBtn.innerHTML = '<i class="fas fa-play"></i>';
                     musicStatus.className = 'music-status';
-                    musicInfo.innerHTML = `<span class="music-status"></span>点击播放音乐`;
+                    musicInfo.textContent = "点击播放音乐";
                 }
             }
             
             // 初始化状态
             updateMusicStatus(false);
             
-            // 尝试播放当前音乐
-            function tryPlayCurrentMusic() {
-                if (!audioUnlocked) {
-                    showMessage("请先点击页面任意位置，再播放音乐");
-                    return;
-                }
+            // 点击页面任意位置初始化音频
+            function initAudioOnFirstInteraction() {
+                console.log("开始初始化音频...");
                 
-                const musicSource = musicSources[currentMusicIndex];
-                music.src = musicSource.url;
-                music.load();
-                
-                const playPromise = music.play();
+                // 尝试播放静音音频来解锁
+                audio.volume = 0;
+                const playPromise = audio.play();
                 
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
-                        // 播放成功
-                        updateMusicStatus(true);
+                        console.log("音频解锁成功");
+                        // 播放成功，立即暂停
+                        audio.pause();
+                        audio.volume = 0.3; // 恢复音量
+                        audioInitialized = true;
+                        updateMusicStatus(false);
+                        showMessage("音乐已准备好");
+                        
+                        // 移除事件监听器
+                        document.removeEventListener('click', initAudioOnFirstInteraction);
+                        document.removeEventListener('touchstart', initAudioOnFirstInteraction);
+                        
                     }).catch(error => {
-                        // 播放失败，尝试下一个音乐源
-                        console.log(`音乐源 ${currentMusicIndex} 播放失败:`, error);
-                        tryNextMusic();
+                        console.log("音频解锁失败:", error);
+                        // 可能需要用户交互
+                        showMessage("请点击页面任意位置来解锁音乐");
                     });
                 }
             }
             
-            // 尝试下一个音乐源
-            function tryNextMusic() {
-                currentMusicIndex++;
-                
-                if (currentMusicIndex < musicSources.length) {
-                    // 还有更多音乐源可以尝试
-                    showMessage(`正在尝试下一个音乐源... (${currentMusicIndex + 1}/${musicSources.length})`);
-                    tryPlayCurrentMusic();
-                } else {
-                    // 所有音乐源都尝试过了
-                    showMessage("所有音乐源都不可用，请检查网络连接");
-                    musicInfo.innerHTML = `<span class="music-status"></span>音乐不可用`;
-                    playBtn.style.opacity = '0.5';
+            // 添加点击事件来初始化音频
+            document.addEventListener('click', initAudioOnFirstInteraction, { once: true });
+            
+            // 也添加触摸事件
+            document.addEventListener('touchstart', initAudioOnFirstInteraction, { once: true });
+            
+            // 播放音乐函数
+            function playMusic() {
+                if (!audioInitialized) {
+                    showMessage("请先点击页面其他位置，然后再播放音乐");
+                    return false;
                 }
+                
+                const playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log("音乐开始播放");
+                        updateMusicStatus(true);
+                    }).catch(error => {
+                        console.error("播放失败:", error);
+                        showMessage("播放失败，请重试");
+                        updateMusicStatus(false);
+                    });
+                }
+                return true;
             }
             
-            // 播放/暂停按钮点击事件
+            // 播放按钮点击事件
             playBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
+                e.preventDefault();
                 
-                if (!audioUnlocked) {
-                    // 尝试解锁音频
-                    music.volume = 0;
-                    const unlockPromise = music.play();
-                    
-                    if (unlockPromise !== undefined) {
-                        unlockPromise.then(() => {
-                            // 解锁成功
-                            audioUnlocked = true;
-                            music.pause();
-                            music.volume = 0.3;
-                            
-                            // 现在尝试播放音乐
-                            if (isPlaying) {
-                                music.pause();
-                                updateMusicStatus(false);
-                            } else {
-                                tryPlayCurrentMusic();
-                            }
-                        }).catch(error => {
-                            // 解锁失败
-                            console.log("音频解锁失败:", error);
-                            showMessage("请先点击页面任意位置，再播放音乐");
-                        });
-                    }
-                } else {
-                    // 音频已解锁
-                    if (isPlaying) {
-                        music.pause();
-                        updateMusicStatus(false);
-                    } else {
-                        tryPlayCurrentMusic();
-                    }
+                if (!audioInitialized) {
+                    showMessage("请先点击页面其他位置，然后再播放音乐");
+                    return;
                 }
-            });
-            
-            // 页面首次点击时解锁音频
-            document.addEventListener('click', function() {
-                if (!audioUnlocked) {
-                    // 尝试解锁音频
-                    music.volume = 0;
-                    const unlockPromise = music.play();
-                    
-                    if (unlockPromise !== undefined) {
-                        unlockPromise.then(() => {
-                            // 解锁成功
-                            audioUnlocked = true;
-                            music.pause();
-                            music.volume = 0.3;
-                            console.log("音频解锁成功");
-                        }).catch(error => {
-                            console.log("音频解锁失败:", error);
-                        });
-                    }
-                }
-            }, { once: true });
-            
-            // 音频加载失败处理
-            music.addEventListener('error', function() {
-                console.log(`音乐源 ${currentMusicIndex} 加载失败`);
                 
-                // 如果正在播放，尝试下一个音乐源
                 if (isPlaying) {
-                    tryNextMusic();
+                    // 如果正在播放，则暂停
+                    audio.pause();
+                    updateMusicStatus(false);
+                } else {
+                    // 如果未播放，则开始播放
+                    playMusic();
                 }
             });
             
-            // 初始化第一个音乐源
-            music.src = musicSources[0].url;
-            music.load();
+            // 音乐结束事件
+            audio.addEventListener('ended', function() {
+                // 如果音乐结束，自动播放下一个
+                currentMusicIndex = (currentMusicIndex + 1) % musicSources.length;
+                audio.src = musicSources[currentMusicIndex];
+                
+                if (isPlaying) {
+                    setTimeout(() => {
+                        playMusic();
+                    }, 1000);
+                }
+            });
+            
+            // 音乐错误处理
+            audio.addEventListener('error', function(e) {
+                console.error("音乐加载错误:", e);
+                showMessage("音乐加载失败，将尝试下一首");
+                
+                // 尝试下一个音乐源
+                currentMusicIndex = (currentMusicIndex + 1) % musicSources.length;
+                audio.src = musicSources[currentMusicIndex];
+                
+                if (isPlaying) {
+                    setTimeout(() => {
+                        playMusic();
+                    }, 1000);
+                }
+            });
+            
+            // 音乐播放状态监听
+            audio.addEventListener('play', function() {
+                updateMusicStatus(true);
+            });
+            
+            audio.addEventListener('pause', function() {
+                updateMusicStatus(false);
+            });
         }
         
         // 初始化验证系统
@@ -1725,6 +1707,16 @@
                 toast.classList.remove('show');
             }, 3000);
         }
+        
+        // 添加闪烁动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes twinkle {
+                0%, 100% { opacity: 0.3; }
+                50% { opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
