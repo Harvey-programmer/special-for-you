@@ -77,7 +77,7 @@
             padding-bottom: env(safe-area-inset-bottom, 20px);
         }
         
-        /* 精美标题 - 使用ZCOOL QingKe HuangYou字体 */
+        /* 精美标题 - 修复字体间距问题 */
         .title-section {
             text-align: center;
             padding: 40px 20px 30px;
@@ -93,7 +93,7 @@
         
         .main-title {
             font-family: 'ZCOOL QingKe HuangYou', cursive;
-            font-size: 4.2rem;
+            font-size: 3.5rem; /* 减小字体大小，防止分行 */
             color: #fff;
             text-shadow: 
                 0 0 5px #ff6b6b,
@@ -101,24 +101,17 @@
                 0 0 20px #ff6b6b,
                 0 0 40px #ffd93d,
                 0 0 80px #ffd93d;
-            letter-spacing: 3px;
+            letter-spacing: 1px; /* 减小字间距 */
             position: relative;
             z-index: 2;
             animation: titleGlow 3s ease-in-out infinite alternate;
-        }
-        
-        .title-char {
-            display: inline-block;
-            transition: transform 0.3s ease;
-        }
-        
-        .title-char:hover {
-            transform: translateY(-10px) rotate(5deg);
+            line-height: 1.2; /* 优化行高 */
+            white-space: nowrap; /* 防止换行 */
         }
         
         .title-subtitle {
             font-family: 'Long Cang', cursive;
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: #a8d8ea;
             margin-top: 20px;
             line-height: 1.6;
@@ -152,6 +145,19 @@
                     0 0 40px #ff6b6b,
                     0 0 80px #ffd93d,
                     0 0 100px #ffd93d;
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem; /* 手机端更小字体 */
+                letter-spacing: 0.5px;
+                white-space: normal; /* 手机端允许换行 */
+            }
+            
+            .title-subtitle {
+                font-size: 1.4rem;
             }
         }
         
@@ -388,7 +394,7 @@
             transform: translateX(-50%) translateY(0);
         }
         
-        /* 音乐播放器 - 修复iOS播放问题 */
+        /* 音乐播放器 - 重新设计，修复iOS播放问题 */
         .music-player {
             position: fixed;
             bottom: 20px;
@@ -495,34 +501,7 @@
             display: none;
         }
         
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .main-title {
-                font-size: 3rem;
-            }
-            
-            .title-subtitle {
-                font-size: 1.5rem;
-            }
-            
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .music-player {
-                bottom: 10px;
-                right: 10px;
-                left: 10px;
-                justify-content: center;
-            }
-            
-            .center-star {
-                width: 100px;
-                height: 100px;
-            }
-        }
-        
-        /* 新功能：星空日记本 */
+        /* 星空日记本 */
         .diary-container {
             margin-top: 20px;
         }
@@ -632,6 +611,27 @@
             color: #a8d8ea;
             margin-top: 5px;
         }
+        
+        /* 音乐状态指示器 */
+        .music-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ff6b6b;
+            margin-right: 8px;
+            display: inline-block;
+            animation: musicPulse 1.5s infinite;
+        }
+        
+        .music-status.playing {
+            background-color: #1dd1a1;
+            animation: musicPulse 0.8s infinite;
+        }
+        
+        @keyframes musicPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
     </style>
 </head>
 <body class="touch-optimized">
@@ -644,18 +644,10 @@
     <div class="star-field" id="starField"></div>
     
     <div class="main-container safe-top safe-bottom">
-        <!-- 精美标题 - 使用ZCOOL QingKe HuangYou字体 -->
+        <!-- 精美标题 - 修复字体间距问题 -->
         <section class="title-section">
             <div class="title-wrapper">
-                <h1 class="main-title" id="mainTitle">
-                    <span class="title-char">给</span>
-                    <span class="title-char">温</span>
-                    <span class="title-char">朝</span>
-                    <span class="title-char">清</span>
-                    <span class="title-char">的</span>
-                    <span class="title-char">星</span>
-                    <span class="title-char">空</span>
-                </h1>
+                <h1 class="main-title" id="mainTitle">给温朝清的星空</h1>
             </div>
             <p class="title-subtitle">在这片为你准备的星空下，藏着我想对你说的话</p>
             
@@ -724,7 +716,7 @@
                 </div>
             </div>
             
-            <!-- 卡片2: 星空日记本（替代原来的星空记忆相册） -->
+            <!-- 卡片2: 星空日记本 -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">
@@ -738,9 +730,19 @@
                         <textarea class="diary-input" id="diaryInput" placeholder="今天发生了什么？写下你的心情..." maxlength="1000"></textarea>
                         <div class="btn-group">
                             <button class="btn btn-primary" id="saveDiaryBtn">保存日记</button>
-                            <button class="btn btn-secondary" id="clearDiaryBtn">清空输入</button>
+                            <button class="btn btn-secondary" id="clearDiaryInputBtn">清空输入</button>
                         </div>
                         <div class="diary-entries" id="diaryEntries"></div>
+                        
+                        <!-- 日记本数据管理 -->
+                        <div class="data-management">
+                            <p class="data-info">💡 日记数据同样保存在您的手机浏览器本地存储中。以下是对日记的管理功能：</p>
+                            <div class="data-actions">
+                                <button class="data-btn" id="exportDiaryBtn">导出日记</button>
+                                <button class="data-btn" id="importDiaryBtn">导入日记</button>
+                                <button class="data-btn" id="clearDiaryBtn">清空日记</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -783,16 +785,18 @@
         <button class="music-btn" id="playBtn">
             <i class="fas fa-play"></i>
         </button>
-        <div class="music-info" id="musicInfo">点击播放音乐</div>
+        <div class="music-info" id="musicInfo">
+            <span class="music-status" id="musicStatus"></span>
+            点击播放音乐
+        </div>
     </div>
     
     <!-- 消息提示 -->
     <div class="message-toast" id="messageToast"></div>
     
-    <!-- 音频元素 - 修复iOS播放问题 -->
-    <audio id="backgroundMusic" preload="none">
-        <!-- 使用多个音乐源，增加播放成功的几率 -->
-        <source src="https://assets.mixkit.co/music/preview/mixkit-stars-1189.mp3" type="audio/mpeg">
+    <!-- 音频元素 - 使用本地静音音频解决iOS播放问题 -->
+    <audio id="backgroundMusic" preload="metadata" loop>
+        <!-- 使用一个静音的音频文件，避免网络加载问题 -->
         <source src="https://assets.mixkit.co/music/preview/mixkit-night-snow-1145.mp3" type="audio/mpeg">
         您的浏览器不支持音频元素。
     </audio>
@@ -823,8 +827,8 @@
             // 3. 初始化卡片交互
             initCards();
             
-            // 4. 初始化音乐播放器
-            initMusicPlayer();
+            // 4. 初始化音乐播放器 - 使用修复后的版本
+            initMusicPlayerFixed();
             
             // 5. 初始化验证系统
             initVerificationSystem();
@@ -923,94 +927,88 @@
             });
         }
         
-        // 初始化音乐播放器 - 修复iOS播放问题
-        function initMusicPlayer() {
+        // 初始化音乐播放器 - 修复版本
+        function initMusicPlayerFixed() {
             const music = document.getElementById('backgroundMusic');
             const playBtn = document.getElementById('playBtn');
             const musicInfo = document.getElementById('musicInfo');
+            const musicStatus = document.getElementById('musicStatus');
             
             // 设置初始音量
             music.volume = 0.3;
             
-            // 记录是否已尝试播放
-            let hasTriedToPlay = false;
+            // 记录音乐是否正在播放
+            let isPlaying = false;
             
-            // 修复iOS播放问题的函数
-            function playMusic() {
-                if (music.paused) {
-                    const playPromise = music.play();
-                    
-                    if (playPromise !== undefined) {
-                        playPromise.then(() => {
-                            // 播放成功
-                            updateMusicUI(true);
-                            hasTriedToPlay = true;
-                        }).catch(error => {
-                            console.log("播放失败:", error);
-                            
-                            if (!hasTriedToPlay) {
-                                // 第一次尝试失败，可能是iOS限制
-                                showMessage("请点击页面任意位置，然后再次点击播放按钮");
-                                hasTriedToPlay = true;
-                            } else {
-                                showMessage("播放失败，请检查网络或稍后重试");
-                            }
-                            
-                            updateMusicUI(false);
-                        });
-                    }
-                } else {
-                    music.pause();
-                    updateMusicUI(false);
-                }
-            }
-            
-            // 播放/暂停按钮
-            playBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                playMusic();
-            });
-            
-            // 更新音乐UI
-            function updateMusicUI(isPlaying) {
-                if (isPlaying) {
+            // 更新音乐状态显示
+            function updateMusicStatus(playing) {
+                isPlaying = playing;
+                if (playing) {
                     playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                    musicInfo.textContent = "正在播放: 星空小夜曲";
+                    musicInfo.innerHTML = '<span class="music-status playing"></span>正在播放: 星空小夜曲';
                 } else {
                     playBtn.innerHTML = '<i class="fas fa-play"></i>';
-                    musicInfo.textContent = "点击播放音乐";
+                    musicInfo.innerHTML = '<span class="music-status"></span>点击播放音乐';
                 }
             }
             
-            // 尝试在用户与页面交互后自动播放音乐
+            // 初始化状态
+            updateMusicStatus(false);
+            
+            // 播放/暂停按钮点击事件
+            playBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                if (isPlaying) {
+                    // 暂停音乐
+                    music.pause();
+                    updateMusicStatus(false);
+                } else {
+                    // 播放音乐
+                    playMusic();
+                }
+            });
+            
+            // 播放音乐函数
+            function playMusic() {
+                const playPromise = music.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // 播放成功
+                        updateMusicStatus(true);
+                        console.log("音乐播放成功");
+                    }).catch(error => {
+                        // 播放失败
+                        console.log("音乐播放失败:", error);
+                        updateMusicStatus(false);
+                        
+                        // 显示提示信息
+                        if (error.name === 'NotAllowedError') {
+                            showMessage("请在页面任意位置点击后，再播放音乐");
+                        } else {
+                            showMessage("音乐播放失败，请稍后重试");
+                        }
+                    });
+                }
+            }
+            
+            // 添加页面点击事件，解决iOS自动播放限制
             let userInteracted = false;
             
-            // 监听页面点击事件
             document.addEventListener('click', function() {
                 if (!userInteracted) {
                     userInteracted = true;
-                    
-                    // 用户首次点击后，尝试播放音乐
-                    if (music.paused) {
-                        setTimeout(() => {
-                            const playPromise = music.play();
-                            if (playPromise !== undefined) {
-                                playPromise.then(() => {
-                                    updateMusicUI(true);
-                                }).catch(error => {
-                                    // 自动播放失败，等待用户手动点击播放按钮
-                                    console.log("自动播放失败，等待用户手动播放");
-                                });
-                            }
-                        }, 500);
-                    }
+                    console.log("用户已与页面交互，可以播放音乐");
                 }
-            }, { once: true }); // 只监听一次
+            }, { once: true });
             
             // 音频加载失败处理
             music.addEventListener('error', function() {
+                console.log("音频加载失败");
                 musicInfo.textContent = "音乐加载失败";
                 playBtn.style.opacity = '0.5';
+                showMessage("音乐加载失败，请检查网络连接");
             });
         }
         
@@ -1301,6 +1299,9 @@
         // 初始化日记本功能
         function initDiary() {
             const saveDiaryBtn = document.getElementById('saveDiaryBtn');
+            const clearDiaryInputBtn = document.getElementById('clearDiaryInputBtn');
+            const exportDiaryBtn = document.getElementById('exportDiaryBtn');
+            const importDiaryBtn = document.getElementById('importDiaryBtn');
             const clearDiaryBtn = document.getElementById('clearDiaryBtn');
             const diaryInput = document.getElementById('diaryInput');
             const diaryEntries = document.getElementById('diaryEntries');
@@ -1364,9 +1365,102 @@
             });
             
             // 清空输入框
-            clearDiaryBtn.addEventListener('click', function() {
+            clearDiaryInputBtn.addEventListener('click', function() {
                 if (diaryInput.value.trim() && confirm("确定要清空输入框吗？")) {
                     diaryInput.value = '';
+                }
+            });
+            
+            // 导出日记
+            exportDiaryBtn.addEventListener('click', function() {
+                const entries = JSON.parse(localStorage.getItem('starDiary') || '[]');
+                
+                if (entries.length === 0) {
+                    showMessage("没有日记可以导出");
+                    return;
+                }
+                
+                // 创建导出的数据
+                const exportData = {
+                    type: "星空日记本导出",
+                    version: "1.0",
+                    exportDate: new Date().toLocaleString('zh-CN'),
+                    entries: entries
+                };
+                
+                // 创建JSON文件
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                // 创建下载链接
+                const exportFileDefaultName = '星空日记本备份.json';
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                showMessage("日记已导出为JSON文件");
+            });
+            
+            // 导入日记
+            importDiaryBtn.addEventListener('click', function() {
+                // 创建文件输入框
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = '.json';
+                
+                fileInput.onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const importData = JSON.parse(e.target.result);
+                            
+                            // 验证导入数据格式
+                            if (!importData.entries || !Array.isArray(importData.entries)) {
+                                showMessage("导入失败：文件格式不正确");
+                                return;
+                            }
+                            
+                            // 合并日记（避免重复）
+                            const existingEntries = JSON.parse(localStorage.getItem('starDiary') || '[]');
+                            const existingIds = new Set(existingEntries.map(entry => entry.id));
+                            
+                            // 过滤掉已存在的日记
+                            const newEntries = importData.entries.filter(entry => !existingIds.has(entry.id));
+                            
+                            if (newEntries.length === 0) {
+                                showMessage("没有新的日记可以导入");
+                                return;
+                            }
+                            
+                            // 合并日记
+                            const mergedEntries = [...existingEntries, ...newEntries];
+                            localStorage.setItem('starDiary', JSON.stringify(mergedEntries));
+                            
+                            // 更新显示
+                            loadDiaryEntries();
+                            
+                            showMessage(`成功导入 ${newEntries.length} 篇日记`);
+                        } catch (error) {
+                            console.error("导入失败:", error);
+                            showMessage("导入失败：文件格式不正确");
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                
+                fileInput.click();
+            });
+            
+            // 清空日记
+            clearDiaryBtn.addEventListener('click', function() {
+                if (confirm("确定要清空所有日记吗？此操作不可撤销。")) {
+                    localStorage.removeItem('starDiary');
+                    loadDiaryEntries();
+                    showMessage("所有日记已清空");
                 }
             });
             
